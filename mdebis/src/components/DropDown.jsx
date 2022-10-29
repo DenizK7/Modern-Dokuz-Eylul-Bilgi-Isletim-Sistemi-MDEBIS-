@@ -5,15 +5,15 @@ import 'primereact/resources/primereact.css';
 import { Dropdown } from 'primereact/dropdown';
 
 const DropdownExtens = () => {
-    const [selectedCity1, setSelectedCity1] = useState(null);
+    const [selectedExtension, setSelectedExtension] = useState(null);
     let student = '@ogr.deu.edu.tr';
-    let teacher = '@ogr.deu.edu.tr';
-    const cities = [
+    let teacher = '@.deu.edu.tr';
+    const extensions = [
         { name: student, code: 'student' },
         { name: teacher, code: 'teacher' }
     ];   
-    const onCityChange = (e) => {
-        setSelectedCity1(e.value);
+    const onExtensionChange = (e) => {
+        setSelectedExtension(e.value);
     }
     const mystyle = {
       fontSize: "10px",
@@ -25,7 +25,7 @@ const DropdownExtens = () => {
     return (
         <div className="dropdown">
             <div className="card">
-                <Dropdown value={selectedCity1} options={cities} onChange={onCityChange} optionLabel="name" placeholder="Select a City"style={mystyle}/>                                
+                <Dropdown value={selectedExtension} options={extensions} onChange={onExtensionChange} optionLabel="name" placeholder="Extension"style={mystyle}/>                                
             </div>
         </div>
     );

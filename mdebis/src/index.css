@@ -24,7 +24,12 @@ background-position:center;
 
 .modal-dialog {
   padding: 8px;
-  background-color: lime;
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  backdrop-filter: blur(8.5px);
+  -webkit-backdrop-filter: blur(8.5px);
+  border-radius: 10px;
+  color: #ffffff;
   position: fixed;
   overflow-y: scroll;
   display: block;
@@ -40,6 +45,7 @@ background-position:center;
 }
 
 .modal-dialog.show {
+  width: 19vw;
   right: 0px;
   -webkit-transition: opacity 0.3s linear, right 0.3s ease-out;
   -moz-transition: opacity 0.3s linear, right 0.3s ease-out;
@@ -91,7 +97,22 @@ background-position:center;
   right: 0;
   top: 8px;
   position: absolute;
+  width: 50px;
+  height: 50px;
   background-image: url("/image/hamburgerButton.png");
   background-size:cover;
   background-position:center;
+}
+.anc-main{
+  padding-top: 3vh;
+  height: 30vh;
+  
+}
+.anc-main-long{
+  overflow-y: scroll;
+  height: 16vh;
+}
+.anc-main-short{
+  overflow: hidden;
+  height: 10vh;
 }

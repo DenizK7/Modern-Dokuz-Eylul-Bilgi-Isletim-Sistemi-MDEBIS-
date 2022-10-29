@@ -40,6 +40,10 @@ const MainContain = styled.div`
       font-size: small;
     }
   }
+  @media only screen and (max-height: 840px) {
+    height: 80vh;
+    
+  }
   @media only screen and (min-width: 360px) {
     width: 80vw;
     height: 90vh;

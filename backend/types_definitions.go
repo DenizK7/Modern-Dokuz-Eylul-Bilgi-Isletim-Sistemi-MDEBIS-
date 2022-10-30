@@ -22,6 +22,12 @@ type lecturer struct {
 	Dep_name string
 	E_mail   string
 }
+type general_announcement struct {
+	Announcement_id int
+	Title           string
+	Content         string
+	Link            string
+}
 type announcement struct {
 	Course_id int
 	Content   string

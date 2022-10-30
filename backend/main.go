@@ -19,11 +19,8 @@ func main() {
 	if err != nil {
 		panic(err.Error())
 	}
-
-	succes, res := lecturer_forgot("birant.derya")
-	if succes == false {
-		fmt.Println("no lecturer")
-	} else {
-		fmt.Printf("mail" + string(res))
+	succes, announcements := get_general_announcements()
+	if succes != false {
+		fmt.Println(string(announcements))
 	}
 }

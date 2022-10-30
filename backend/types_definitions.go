@@ -10,6 +10,7 @@ type student struct {
 	Grade    int
 	Gpa      int
 	E_mail   string
+	Courses  []course
 }
 
 type lecturer struct {
@@ -34,11 +35,12 @@ type announcement struct {
 }
 
 type course struct {
-	Id            int
-	Name          string
-	LecturerId    int
-	Resp_dept     string
-	Day           [5]int
-	Hours         [8]int
-	Announcements []announcement
+	Id                int
+	Name              string
+	LecturerId        int
+	Resp_dept         string
+	Day               string
+	Hours             string
+	Announcements     []announcement
+	Lecturer_username string
 }

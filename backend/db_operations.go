@@ -27,21 +27,21 @@ func get_general_announcements() (bool, []byte) {
 	return true, json_announcements
 }
 
-func student_log_in(username string, password string) (bool, []byte) {
+func student_log_in(username string, password string) (bool, []byte, student) {
 	var student student
 	if err := db.QueryRow("SELECT * from mdebis.student where username=? and password=?",
 		username, password).Scan(&student.Username, &student.Id, &student.Password,
 		&student.Surname, &student.Dep_name, &student.Grade, &student.Name, &student.Gpa, &student.E_mail); err != nil {
 		if err == sql.ErrNoRows {
-			return false, nil
+			return false, nil, student
 		}
-		return false, nil
+		return false, nil, student
 	}
 	json_student, err := json.Marshal(student)
 	if err != nil {
-		return false, nil
+		return false, nil, student
 	}
-	return true, json_student
+	return true, json_student, student
 }
 
 func lecturer_log_in(username string, password string) (bool, []byte) {
@@ -92,4 +92,31 @@ func lecturer_forgot(username string) (bool, []byte) {
 		return false, nil
 	}
 	return true, json_mail
+}
+
+func get_courses(student *student) []byte {
+	rows, err := db.Query("SELECT * from mdebis.course where idCourse=(SELECT idCourse FROM mdebis.course_has_student WHERE idStudent=?);", student.Id)
+	if err != nil {
+		return nil
+	}
+	defer rows.Close()
+
+	var courses []course
+
+	// Loop through rows, using Scan to assign column data to struct fields.
+	for rows.Next() {
+		var course course
+		if err := rows.Scan(&course.Id, &course.Name, &course.LecturerId, &course.Resp_dept, &course.Day, &course.Hours, &course.Lecturer_username); err != nil {
+			return nil
+		}
+		courses = append(courses, course)
+	}
+	student.Courses = courses
+	json_courses, err := json.MarshalIndent(courses, "", "")
+	return json_courses
+
+}
+func get_course_announcements(student_id int) []byte {
+
+	return nil
 }

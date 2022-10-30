@@ -19,8 +19,12 @@ func main() {
 	if err != nil {
 		panic(err.Error())
 	}
-	succes, announcements := get_general_announcements()
+	succes, json_st, student := student_log_in("emir", "354152")
 	if succes != false {
-		fmt.Println(string(announcements))
+		fmt.Println("here is the student")
+		fmt.Println(string(json_st))
+		courses := get_courses(&student)
+		fmt.Println(string(courses))
 	}
+
 }

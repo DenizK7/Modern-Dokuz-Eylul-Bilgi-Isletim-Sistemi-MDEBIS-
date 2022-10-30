@@ -3,6 +3,8 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
+	"strings"
 )
 
 func get_general_announcements() (bool, []byte) {
@@ -116,7 +118,33 @@ func get_courses(student *student) []byte {
 	return json_courses
 
 }
-func get_course_announcements(student_id int) []byte {
-
-	return nil
+func get_course_announcements(student *student) []byte {
+	if student.Courses == nil {
+		get_courses(student)
+	}
+	//collect course ids
+	var course_ids []string
+	var courses = student.Courses
+	for i := 0; i < len(courses); i++ {
+		course_ids = append(course_ids, courses[i].Id)
+	}
+	rows, err := db.Query("SELECT * from mdebis.announcement where Course_idCourse IN (?)", strings.Join(course_ids, ","))
+	if err != nil {
+		return nil
+	}
+	defer rows.Close()
+	var announcements []announcement
+	// Loop on rows, using Scan to assign column data to struct fields.
+	for rows.Next() {
+		var announcement announcement
+		if err := rows.Scan(&announcement.Announcement_id, &announcement.Course_id, &announcement.Content); err != nil {
+			return nil
+		}
+		announcements = append(announcements, announcement)
+	}
+	json_announcements, err := json.MarshalIndent(announcements, " ", " ")
+	if err != nil {
+		fmt.Println("error when converting to json")
+	}
+	return json_announcements
 }

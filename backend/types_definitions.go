@@ -30,12 +30,13 @@ type general_announcement struct {
 	Link            string
 }
 type announcement struct {
-	Course_id int
-	Content   string
+	Announcement_id int
+	Course_id       int
+	Content         string
 }
 
 type course struct {
-	Id                int
+	Id                string
 	Name              string
 	LecturerId        int
 	Resp_dept         string

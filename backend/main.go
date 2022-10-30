@@ -23,8 +23,9 @@ func main() {
 	if succes != false {
 		fmt.Println("here is the student")
 		fmt.Println(string(json_st))
-		courses := get_courses(&student)
-		fmt.Println(string(courses))
+		fmt.Println("\n\n")
+		announcements := get_course_announcements(&student)
+		fmt.Println(string(announcements))
 	}
 
 }

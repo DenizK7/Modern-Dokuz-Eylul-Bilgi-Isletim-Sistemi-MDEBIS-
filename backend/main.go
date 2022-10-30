@@ -20,11 +20,10 @@ func main() {
 		panic(err.Error())
 	}
 
-	succes, res := student_log_in("emir", "354152")
+	succes, res := lecturer_forgot("birant.derya")
 	if succes == false {
-		fmt.Printf("NO STUDENT")
+		fmt.Println("no lecturer")
 	} else {
-		fmt.Println("LOGGED IN SUCCESFULLY")
-		fmt.Println(string(res))
+		fmt.Printf("mail" + string(res))
 	}
 }

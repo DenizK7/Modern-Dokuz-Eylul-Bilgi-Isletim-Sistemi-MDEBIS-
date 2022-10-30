@@ -6,9 +6,10 @@ type student struct {
 	Password string
 	Name     string
 	Surname  string
-	Dep_code string
+	Dep_name string
 	Grade    int
 	Gpa      int
+	E_mail   string
 }
 
 type lecturer struct {
@@ -18,7 +19,8 @@ type lecturer struct {
 	Name     string
 	Surname  string
 	Title    string
-	Dep_name int
+	Dep_name string
+	E_mail   string
 }
 type announcement struct {
 	Course_id int

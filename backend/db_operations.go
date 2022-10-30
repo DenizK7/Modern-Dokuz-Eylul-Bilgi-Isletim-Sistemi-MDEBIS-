@@ -20,9 +20,21 @@ func student_log_in(username string, password string) (bool, []byte) {
 		return false, nil
 	}
 	return true, json_student
-
 }
 
-func lecturer_log_in(username string, password string) {
-
+func lecturer_log_in(username string, password string) (bool, []byte) {
+	var lecturer lecturer
+	if err := db.QueryRow("SELECT * from mdebis.lecturer where username=? and password=?",
+		username, password).Scan(&lecturer.Username, &lecturer.Id, &lecturer.Password,
+		&lecturer.Surname, &lecturer.Title, &lecturer.Dep_name); err != nil {
+		if err == sql.ErrNoRows {
+			return false, nil
+		}
+		return false, nil
+	}
+	json_lecturer, err := json.Marshal(lecturer)
+	if err != nil {
+		return false, nil
+	}
+	return true, json_lecturer
 }

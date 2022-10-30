@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -19,6 +20,11 @@ func main() {
 		panic(err.Error())
 	}
 
-	student_log_in("emir", "354152")
-
+	succes, res := student_log_in("emir", "354152")
+	if succes == false {
+		fmt.Printf("NO STUDENT")
+	} else {
+		fmt.Println("LOGGED IN SUCCESFULLY")
+		fmt.Println(string(res))
+	}
 }

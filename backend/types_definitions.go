@@ -1,36 +1,36 @@
 package main
 
 type student struct {
-	username string
-	id       string
-	password string
-	name     string
-	surname  string
-	dep_code string
-	grade    int
-	gpa      int
+	Username string
+	Id       string
+	Password string
+	Name     string
+	Surname  string
+	Dep_code string
+	Grade    int
+	Gpa      int
 }
 
 type lecturer struct {
-	username string
-	id       string
-	password string
-	name     string
-	surname  string
-	title    string
-	dep_name int
+	Username string
+	Id       string
+	Password string
+	Name     string
+	Surname  string
+	Title    string
+	Dep_name int
 }
 type announcement struct {
-	course_id int
-	content   string
+	Course_id int
+	Content   string
 }
 
 type course struct {
-	id            int
-	name          string
-	lecturerId    int
-	resp_dept     string
-	day           [5]int
-	hours         [8]int
-	announcements []announcement
+	Id            int
+	Name          string
+	LecturerId    int
+	Resp_dept     string
+	Day           [5]int
+	Hours         [8]int
+	Announcements []announcement
 }

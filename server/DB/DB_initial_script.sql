@@ -18,6 +18,19 @@ CREATE SCHEMA IF NOT EXISTS `mdebis` DEFAULT CHARACTER SET utf8mb3 ;
 USE `mdebis` ;
 
 -- -----------------------------------------------------
+-- Table `mdebis`.`announcement`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mdebis`.`announcement` (
+  `announcementID`  NOT NULL,
+  `Course_idCourse`  NOT NULL,
+  `content` LONGTEXT NOT NULL,
+  PRIMARY KEY (`announcementID`),
+  INDEX `fk_Announcement_Course1_idx` (`Course_idCourse` ASC) VISIBLE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
 -- Table `mdebis`.`lecturer`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `mdebis`.`lecturer` (
@@ -50,20 +63,6 @@ CREATE TABLE IF NOT EXISTS `mdebis`.`course` (
   CONSTRAINT `fk_Course_Lecturer1`
     FOREIGN KEY (`Lecturer_username`)
     REFERENCES `mdebis`.`lecturer` (`username`))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb3;
-
-
--- -----------------------------------------------------
--- Table `mdebis`.`announcement`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mdebis`.`announcement` (
-  `Course_idCourse`  NOT NULL,
-  `Announcementcol` LONGTEXT NOT NULL,
-  INDEX `fk_Announcement_Course1_idx` (`Course_idCourse` ASC) VISIBLE,
-  CONSTRAINT `fk_Announcement_Course1`
-    FOREIGN KEY (`Course_idCourse`)
-    REFERENCES `mdebis`.`course` (`idCourse`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb3;
 

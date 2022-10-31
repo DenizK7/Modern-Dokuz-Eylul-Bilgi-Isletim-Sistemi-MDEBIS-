@@ -3,10 +3,17 @@ import Button from "./Button";
 import Icon from "./Icon";
 import Input from "./Input";
 import Password from "./Password"
-import DropDown from "./DropDown";
-import { FaFacebookF,FaLinkedin, FaInstagram, FaTwitter } from "react-icons/fa";
+import DropDownn from "./DropDown";
+import { FaFacebookF,FaLinkedin, FaInstagram, FaTwitter} from "react-icons/fa";
+import { useTranslation } from "react-i18next";
+import i18n from "../i18n";
 
 const MainContainer =() =>{
+  const languages = {
+    en: {nativeName: "English 🇺🇸"},
+    tr: {nativeName: "Türkçe 🇹🇷"}
+  };
+  const {t} = useTranslation();
   const FacebookBackground =
     "linear-gradient(to right, #0546A0 0%, #0546A0 40%, #663FB6 100%)";
   const InstagramBackground =
@@ -128,22 +135,27 @@ const FormatMail = styled.span`
   `;
 return (
     <MainContain>
-    <WelcomeText>Hoşgeldiniz</WelcomeText>
+    <WelcomeText>{t("WELCOME")}</WelcomeText>
     <ButtonContainer>
-      <Input type="text" placeholder="Email"  />
+      <Input type="text" placeholder={t("EMAIL")}  />
       <FormatMail>
-      <DropDown></DropDown>
+      <DropDownn placeholder={t("EXTENSION")}></DropDownn>
       </FormatMail>
     </ButtonContainer>
     <InputContainer>
-    <Password type="password" placeholder="Password" />
+    <Password type="password" placeholder={t("PASSWORD")} />
     </InputContainer>
     <ButtonContainer>
-      <Button content="Giriş" />
+      <Button content={t("LOGIN_BTN")} />
     </ButtonContainer>
-    <LoginWith>Girişte Bir sorun mu yaşıyorsun?</LoginWith>
+    <LoginWith>{t("UNDER_BTN_TXT")}</LoginWith>
     <HorizontalRule />
-    <ForgotPassword>Şifreni Mi Unuttun</ForgotPassword>
+    <ForgotPassword>{t("FORGT_PSSW")}</ForgotPassword>
+    <div>
+    {Object.keys(languages).map((language) =>(
+      <button type="submit" key = {language} onClick={()=> i18n.changeLanguage(language)} disabled={i18n.resolvedLanguage === language}>{languages[language].nativeName}</button>
+    ))}
+    </div>
     <IconsContainer>
       <Icon color={FacebookBackground}>
         <FaFacebookF />

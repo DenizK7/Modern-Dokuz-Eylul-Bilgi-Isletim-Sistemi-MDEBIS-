@@ -3,8 +3,10 @@ import 'primeicons/primeicons.css';
 import 'primereact/resources/themes/lara-light-indigo/theme.css';
 import 'primereact/resources/primereact.css';
 import { Dropdown } from 'primereact/dropdown';
+import { useTranslation } from "react-i18next";
 
 const DropdownExtens = () => {
+    const {t} = useTranslation();
     const [selectedExtension, setSelectedExtension] = useState(null);
     let student = '@ogr.deu.edu.tr';
     let teacher = '@.deu.edu.tr';
@@ -25,10 +27,12 @@ const DropdownExtens = () => {
     return (
         <div className="dropdown">
             <div className="card">
-                <Dropdown value={selectedExtension} options={extensions} onChange={onExtensionChange} optionLabel="name" placeholder="Extension"style={mystyle}/>                                
+                <Dropdown value={selectedExtension} options={extensions} onChange={onExtensionChange} optionLabel="name" placeholder={t("EXTENSION")}style={mystyle}/>                                
             </div>
         </div>
     );
 }
 
-export default DropdownExtens;
+export default function Dropdownn({ placeholder }) {
+    return <DropdownExtens placeholder={placeholder} />;
+  }

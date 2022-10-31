@@ -3,6 +3,8 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"log"
+	"net/http"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -19,12 +21,7 @@ func main() {
 	if err != nil {
 		panic(err.Error())
 	}
-	succes, json_st, student := student_log_in("emir", "354152")
-	if succes != false {
-		fmt.Println("here is the student")
-		fmt.Println(string(json_st))
-		fmt.Println("\n\n")
-		announcements := get_course_announcements(&student)
-		fmt.Println(string(announcements))
-	}
+	r := Router()
+	fmt.Println("Starting server on the port 8080...")
+	log.Fatal(http.ListenAndServe(":8080", r))
 }

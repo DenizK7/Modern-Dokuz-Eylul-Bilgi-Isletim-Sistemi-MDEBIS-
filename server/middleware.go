@@ -4,7 +4,10 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"strings"
+
+	"github.com/gorilla/mux"
 )
 
 func get_general_announcements() (bool, []byte) {
@@ -29,21 +32,23 @@ func get_general_announcements() (bool, []byte) {
 	return true, json_announcements
 }
 
-func student_log_in(username string, password string) (bool, []byte, student) {
+func student_log_in(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	username := params["username"]
+	password := params["password"]
+
 	var student student
 	if err := db.QueryRow("SELECT * from mdebis.student where username=? and password=?",
 		username, password).Scan(&student.Username, &student.Id, &student.Password,
 		&student.Surname, &student.Dep_name, &student.Grade, &student.Name, &student.Gpa, &student.E_mail); err != nil {
 		if err == sql.ErrNoRows {
-			return false, nil, student
+			//return false, nil, student
 		}
-		return false, nil, student
+		//return false, nil, student
 	}
-	json_student, err := json.Marshal(student)
-	if err != nil {
-		return false, nil, student
-	}
-	return true, json_student, student
+
+	//return true, json_student, student
+	json.NewEncoder(w).Encode(student)
 }
 
 func lecturer_log_in(username string, password string) (bool, []byte) {

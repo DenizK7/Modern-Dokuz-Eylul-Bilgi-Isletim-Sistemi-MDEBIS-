@@ -10,10 +10,10 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func get_general_announcements() (bool, []byte) {
+func get_general_announcements(w http.ResponseWriter, r *http.Request) {
 	rows, err := db.Query("SELECT * FROM mdebis.generalannouncement")
 	if err != nil {
-		return false, nil
+		//return false, nil
 	}
 	defer rows.Close()
 
@@ -23,13 +23,12 @@ func get_general_announcements() (bool, []byte) {
 	for rows.Next() {
 		var announcement general_announcement
 		if err := rows.Scan(&announcement.Announcement_id, &announcement.Title, &announcement.Content, &announcement.Link); err != nil {
-			return false, nil
+			//return false, nil
 		}
 		announcements = append(announcements, announcement)
 	}
-	json_announcements, err := json.MarshalIndent(announcements, "", "")
-
-	return true, json_announcements
+	json.NewEncoder(w).Encode(announcements)
+	//return true, json_announcements
 }
 
 func student_log_in(w http.ResponseWriter, r *http.Request) {
@@ -42,30 +41,38 @@ func student_log_in(w http.ResponseWriter, r *http.Request) {
 		username, password).Scan(&student.Username, &student.Id, &student.Password,
 		&student.Surname, &student.Dep_name, &student.Grade, &student.Name, &student.Gpa, &student.E_mail); err != nil {
 		if err == sql.ErrNoRows {
+			fmt.Println("no student")
+			return
 			//return false, nil, student
 		}
+		return
 		//return false, nil, student
 	}
 
 	//return true, json_student, student
+	fmt.Println("found the student :)")
+	//For concurency concerns,
+	pointer_glb_lecturer = nil
+	pointer_glb_student = &student
 	json.NewEncoder(w).Encode(student)
 }
 
-func lecturer_log_in(username string, password string) (bool, []byte) {
+func lecturer_log_in(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	username := params["username"]
+	password := params["password"]
 	var lecturer lecturer
 	if err := db.QueryRow("SELECT * from mdebis.lecturer where username=? and password=?",
 		username, password).Scan(&lecturer.Username, &lecturer.Id, &lecturer.Password, &lecturer.Name,
 		&lecturer.Surname, &lecturer.Title, &lecturer.Dep_name, &lecturer.E_mail); err != nil {
 		if err == sql.ErrNoRows {
-			return false, nil
+			//return false, nil
 		}
-		return false, nil
+		//return false, nil
 	}
-	json_lecturer, err := json.Marshal(lecturer)
-	if err != nil {
-		return false, nil
-	}
-	return true, json_lecturer
+	pointer_glb_student = nil
+	pointer_glb_lecturer = &lecturer
+	json.NewEncoder(w).Encode(lecturer)
 }
 
 func student_forgot(username string) (bool, []byte) {
@@ -101,10 +108,10 @@ func lecturer_forgot(username string) (bool, []byte) {
 	return true, json_mail
 }
 
-func get_courses(student *student) []byte {
-	rows, err := db.Query("SELECT * from mdebis.course where idCourse=(SELECT idCourse FROM mdebis.course_has_student WHERE idStudent=?);", student.Id)
+func get_courses(w http.ResponseWriter, r *http.Request) {
+	rows, err := db.Query("SELECT * from mdebis.course where idCourse=(SELECT idCourse FROM mdebis.course_has_student WHERE idStudent=?);", pointer_glb_student.Id)
 	if err != nil {
-		return nil
+		//return nil
 	}
 	defer rows.Close()
 
@@ -114,18 +121,16 @@ func get_courses(student *student) []byte {
 	for rows.Next() {
 		var course course
 		if err := rows.Scan(&course.Id, &course.Name, &course.LecturerId, &course.Resp_dept, &course.Day, &course.Hours, &course.Lecturer_username); err != nil {
-			return nil
+			//return nil
 		}
 		courses = append(courses, course)
 	}
-	student.Courses = courses
-	json_courses, err := json.MarshalIndent(courses, "", "")
-	return json_courses
-
+	pointer_glb_student.Courses = courses
+	json.NewEncoder(w).Encode(courses)
 }
 func get_course_announcements(student *student) []byte {
-	if student.Courses == nil {
-		get_courses(student)
+	if pointer_glb_student.Courses == nil {
+		//get_courses(student)
 	}
 	//collect course ids
 	var course_ids []string

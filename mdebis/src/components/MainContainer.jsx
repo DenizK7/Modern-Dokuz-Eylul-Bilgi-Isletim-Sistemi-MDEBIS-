@@ -7,8 +7,12 @@ import DropDownn from "./DropDown";
 import { FaFacebookF,FaLinkedin, FaInstagram, FaTwitter} from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import i18n from "../i18n";
+import {useState} from 'react';
+import {useRef} from 'react';
+import Deneme from "./Deneme";
 
 const MainContainer =() =>{
+  
   const languages = {
     en: {nativeName: "English 🇺🇸"},
     tr: {nativeName: "Türkçe 🇹🇷"}
@@ -133,21 +137,23 @@ const FormatMail = styled.span`
   font-size: 6px;
   letter-spacing: 0rem;
   `;
-return (
+  
+  return (
     <MainContain>
     <WelcomeText>{t("WELCOME")}</WelcomeText>
-    <ButtonContainer>
-      <Input type="text" placeholder={t("EMAIL")}  />
+    {/* <ButtonContainer>
+      <Input></Input>
       <FormatMail>
       <DropDownn placeholder={t("EXTENSION")}></DropDownn>
       </FormatMail>
     </ButtonContainer>
     <InputContainer>
-    <Password type="password" placeholder={t("PASSWORD")} />
+    <Password  />
     </InputContainer>
     <ButtonContainer>
-      <Button content={t("LOGIN_BTN")} />
-    </ButtonContainer>
+      <Button content={t("LOGIN_BTN") } onClick={handleClick}/>
+    </ButtonContainer> */}
+    <Deneme></Deneme>
     <LoginWith>{t("UNDER_BTN_TXT")}</LoginWith>
     <HorizontalRule />
     <ForgotPassword>{t("FORGT_PSSW")}</ForgotPassword>
@@ -174,6 +180,9 @@ return (
     
     
   );
+  
 
-}
+};
+  
+
 export default MainContainer;

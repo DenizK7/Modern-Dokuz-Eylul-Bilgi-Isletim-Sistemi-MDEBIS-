@@ -1,8 +1,21 @@
 import styled from "styled-components";
-export default function Input({ type, placeholder }) {
-  return <StyledInput type={type} placeholder={placeholder} />;
-}
 
+import {useState} from 'react';
+import { useTranslation } from "react-i18next";
+const Passwordmy = ()=>{
+  const {t} = useTranslation();
+  const [message, setMessage] = useState('');
+
+  const handleChange = event => {
+    setMessage(event.target.value);
+
+    console.log('value is:', event.target.value);
+  };
+  return(
+<StyledInput  type="password"
+        id="message" name="message" placeholder={t("EMAIL")} onChange={handleChange}
+        value={message}></StyledInput>);
+}
 const StyledInput = styled.input`
   background: rgba(255, 255, 255, 0.15);
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
@@ -27,3 +40,4 @@ const StyledInput = styled.input`
     font-size: 1rem;
   }
 `;
+export default Passwordmy;

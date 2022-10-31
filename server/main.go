@@ -27,5 +27,4 @@ func main() {
 		announcements := get_course_announcements(&student)
 		fmt.Println(string(announcements))
 	}
-
 }

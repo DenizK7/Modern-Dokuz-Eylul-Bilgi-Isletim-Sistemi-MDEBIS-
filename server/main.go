@@ -12,12 +12,8 @@ import (
 /*CONSTANTS CAME HERE
  */
 var db *sql.DB
-var glb_student student
-var glb_lecturer lecturer
 
 func main() {
-	pointer_glb_student := &glb_student
-	pointer_glb_lecturer = &glb_lecturer
 	db_loc, err := sql.Open("mysql", "root:354152@tcp(127.0.0.1:3306)/mdebis")
 	db = db_loc
 	defer db.Close()

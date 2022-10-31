@@ -51,9 +51,7 @@ func student_log_in(w http.ResponseWriter, r *http.Request) {
 
 	//return true, json_student, student
 	fmt.Println("found the student :)")
-	//For concurency concerns,
-	pointer_glb_lecturer = nil
-	pointer_glb_student = &student
+
 	json.NewEncoder(w).Encode(student)
 }
 
@@ -70,8 +68,6 @@ func lecturer_log_in(w http.ResponseWriter, r *http.Request) {
 		}
 		//return false, nil
 	}
-	pointer_glb_student = nil
-	pointer_glb_lecturer = &lecturer
 	json.NewEncoder(w).Encode(lecturer)
 }
 
@@ -108,8 +104,8 @@ func lecturer_forgot(username string) (bool, []byte) {
 	return true, json_mail
 }
 
-func get_courses(w http.ResponseWriter, r *http.Request) {
-	rows, err := db.Query("SELECT * from mdebis.course where idCourse=(SELECT idCourse FROM mdebis.course_has_student WHERE idStudent=?);", pointer_glb_student.Id)
+func get_courses(student *student) {
+	rows, err := db.Query("SELECT * from mdebis.course where idCourse=(SELECT idCourse FROM mdebis.course_has_student WHERE idStudent=?);", student.Id)
 	if err != nil {
 		//return nil
 	}
@@ -121,16 +117,18 @@ func get_courses(w http.ResponseWriter, r *http.Request) {
 	for rows.Next() {
 		var course course
 		if err := rows.Scan(&course.Id, &course.Name, &course.LecturerId, &course.Resp_dept, &course.Day, &course.Hours, &course.Lecturer_username); err != nil {
-			//return nil
+			//	return nil
 		}
 		courses = append(courses, course)
 	}
-	pointer_glb_student.Courses = courses
-	json.NewEncoder(w).Encode(courses)
+	student.Courses = courses
+	//json_courses, err := json.MarshalIndent(courses, "", "")
+	//return json_courses
+
 }
 func get_course_announcements(student *student) []byte {
-	if pointer_glb_student.Courses == nil {
-		//get_courses(student)
+	if student.Courses == nil {
+		get_courses(student)
 	}
 	//collect course ids
 	var course_ids []string

@@ -3,6 +3,8 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"log"
+	"net/http"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -10,8 +12,12 @@ import (
 /*CONSTANTS CAME HERE
  */
 var db *sql.DB
+var glb_student student
+var glb_lecturer lecturer
 
 func main() {
+	pointer_glb_student := &glb_student
+	pointer_glb_lecturer = &glb_lecturer
 	db_loc, err := sql.Open("mysql", "root:354152@tcp(127.0.0.1:3306)/mdebis")
 	db = db_loc
 	defer db.Close()
@@ -19,12 +25,7 @@ func main() {
 	if err != nil {
 		panic(err.Error())
 	}
-	succes, json_st, student := student_log_in("emir", "354152")
-	if succes != false {
-		fmt.Println("here is the student")
-		fmt.Println(string(json_st))
-		fmt.Println("\n\n")
-		announcements := get_course_announcements(&student)
-		fmt.Println(string(announcements))
-	}
+	r := Router()
+	fmt.Println("Starting server on the port 8080...")
+	log.Fatal(http.ListenAndServe(":8080", r))
 }

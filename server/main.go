@@ -14,7 +14,7 @@ import (
 var db *sql.DB
 
 func main() {
-	db_loc, err := sql.Open("mysql", "root:354152@tcp(127.0.0.1:3306)/mdebis")
+	db_loc, err := sql.Open("mysql", "root:deniz2000@tcp(127.0.0.1:3306)/mdebis")
 	db = db_loc
 	defer db.Close()
 	// if there is an error opening the connection, handle it

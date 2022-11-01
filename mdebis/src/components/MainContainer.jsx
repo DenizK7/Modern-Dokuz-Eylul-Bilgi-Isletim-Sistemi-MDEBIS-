@@ -1,15 +1,9 @@
 import styled from "styled-components";
-import Button from "./Button";
 import Icon from "./Icon";
-import Input from "./Input";
-import Password from "./Password"
-import DropDownn from "./DropDown";
 import { FaFacebookF,FaLinkedin, FaInstagram, FaTwitter} from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import i18n from "../i18n";
-import {useState} from 'react';
-import {useRef} from 'react';
-import Deneme from "./Deneme";
+import LoginInput from "./LoginInputs";
 
 const MainContainer =() =>{
   
@@ -88,20 +82,6 @@ const WelcomeText = styled.h2`
   margin: 3rem 0 2rem 0;
 `;
 
-const InputContainer = styled.div`
-  margin: 0rem 0 1rem 0;  
-  display:flex;
-  align-items: left;
-  width:80%;
-`;
-
-const ButtonContainer = styled.div`
-  margin: 1rem 0 1rem 0;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
 
 const LoginWith = styled.h5`
   text-align: center;
@@ -141,19 +121,8 @@ const FormatMail = styled.span`
   return (
     <MainContain>
     <WelcomeText>{t("WELCOME")}</WelcomeText>
-    {/* <ButtonContainer>
-      <Input></Input>
-      <FormatMail>
-      <DropDownn placeholder={t("EXTENSION")}></DropDownn>
-      </FormatMail>
-    </ButtonContainer>
-    <InputContainer>
-    <Password  />
-    </InputContainer>
-    <ButtonContainer>
-      <Button content={t("LOGIN_BTN") } onClick={handleClick}/>
-    </ButtonContainer> */}
-    <Deneme></Deneme>
+    
+    <LoginInput />
     <LoginWith>{t("UNDER_BTN_TXT")}</LoginWith>
     <HorizontalRule />
     <ForgotPassword>{t("FORGT_PSSW")}</ForgotPassword>

@@ -71,21 +71,25 @@ func lecturer_log_in(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(lecturer)
 }
 
-func student_forgot(username string) (bool, []byte) {
+func student_forgot(w http.ResponseWriter, r *http.Request) {
 	var student student
+	params := mux.Vars(r)
+	username := params["username"]
+
 	if err := db.QueryRow("SELECT * from mdebis.student where username=?",
 		username).Scan(&student.Username, &student.Id, &student.Password,
 		&student.Surname, &student.Dep_name, &student.Grade, &student.Name, &student.Gpa, &student.E_mail); err != nil {
 		if err == sql.ErrNoRows {
-			return false, nil
+			json.NewEncoder(w).Encode(false)
+
+			//return false, nil
 		}
-		return false, nil
+		json.NewEncoder(w).Encode(false)
+		//return false, nil
 	}
-	json_mail, err := json.Marshal(student.E_mail)
-	if err != nil {
-		return false, nil
-	}
-	return true, json_mail
+
+	//return true, json_mail
+	json.NewEncoder(w).Encode(true)
 }
 func lecturer_forgot(username string) (bool, []byte) {
 	var lecturer lecturer

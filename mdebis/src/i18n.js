@@ -19,6 +19,7 @@ i18n
     resources: {
         en: {
             translation: {
+                RESET: "reset",
                 WELCOME: "welcome",
                 EMAIL: "Email",
                 PASSWORD: "Password",
@@ -30,6 +31,7 @@ i18n
         },
         tr: {
             translation: {
+                RESET: "sıfırla",
                 WELCOME: "hoşgeldiniz",
                 EMAIL: "Email",
                 PASSWORD: "şifre",

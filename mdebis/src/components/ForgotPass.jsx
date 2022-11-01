@@ -44,21 +44,30 @@ const ForgotPassword = ()=>{
     console.log('value is:', event.target.value);
   };
   function handleClick() {
-    
-    axios
-    .put(endpoint +"/log_student/" + inpt+ "/"+pssw, {
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-    })
-    .then((res) => {
-      console.log(res);
-      this.getTask();
-    });
+    try {
+      var xhttp = new XMLHttpRequest();
+      xhttp.open("GET", "http://localhost:8080/student_forgot/"+inpt, false);
+      xhttp.setRequestHeader("Content-type", "text/html");
+      xhttp.send();
+      var response = JSON.parse(xhttp.response);
+      console.log(response);
+    } catch (error) {
+      alert(error.message);
+  }
+    // // axios
+    // //   .put(endpoint + "/student_forgot/" + inpt, {
+    // //     headers: {
+    // //       "Content-Type": "application/x-www-form-urlencoded",
+    // //     },
+    // //   })
+    // //   .then((res) => {
+    // //     console.log(res);
+    // //     this.getTask();
+    // //   });
   }
   
   return(
-    <MainContainer>
+    <div>
       
       <ButtonContainer>
       <StyledInput  type="text"
@@ -75,7 +84,7 @@ const ForgotPassword = ()=>{
 
     
 
-    </MainContainer>
+    </div>
 
         
         );

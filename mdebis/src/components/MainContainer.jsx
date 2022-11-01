@@ -128,7 +128,7 @@ const FormatMail = styled.span`
     <MainContain>
     <WelcomeText>{t("WELCOME")}</WelcomeText>
     
-    <ForgotPasswordd />
+    <LoginInput />
     <LoginWith>{t("UNDER_BTN_TXT")}</LoginWith>
     <HorizontalRule />
     <ForgotPassword onClick={() =>{setForgotPassword(true);}}>{t("FORGT_PSSW")}</ForgotPassword >

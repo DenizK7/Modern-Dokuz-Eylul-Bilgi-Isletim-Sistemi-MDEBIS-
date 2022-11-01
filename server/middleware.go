@@ -32,6 +32,7 @@ func get_general_announcements(w http.ResponseWriter, r *http.Request) {
 }
 
 func student_log_in(w http.ResponseWriter, r *http.Request) {
+	enableCors(&w)
 	params := mux.Vars(r)
 	username := params["username"]
 	password := params["password"]
@@ -56,6 +57,7 @@ func student_log_in(w http.ResponseWriter, r *http.Request) {
 }
 
 func lecturer_log_in(w http.ResponseWriter, r *http.Request) {
+	enableCors(&w)
 	params := mux.Vars(r)
 	username := params["username"]
 	password := params["password"]
@@ -72,6 +74,9 @@ func lecturer_log_in(w http.ResponseWriter, r *http.Request) {
 }
 
 func student_forgot(w http.ResponseWriter, r *http.Request) {
+	enableCors(&w)
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
 	var student student
 	params := mux.Vars(r)
 	username := params["username"]
@@ -81,13 +86,15 @@ func student_forgot(w http.ResponseWriter, r *http.Request) {
 		&student.Surname, &student.Dep_name, &student.Grade, &student.Name, &student.Gpa, &student.E_mail); err != nil {
 		if err == sql.ErrNoRows {
 			json.NewEncoder(w).Encode(false)
-
+			fmt.Println("NO STUDENT")
+			return
 			//return false, nil
 		}
-		json.NewEncoder(w).Encode(false)
+		fmt.Println("NO STUDENT")
+		return
 		//return false, nil
 	}
-
+	fmt.Println("mail sent")
 	//return true, json_mail
 	json.NewEncoder(w).Encode(true)
 }

@@ -43,18 +43,18 @@ const LoginInputs = ()=>{
     console.log('value is:', event.target.value);
   };
   function handleClick() {
-    
-    axios
-    .put(endpoint +"/log_student/" + inpt+ "/"+pssw, {
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-    })
-    .then((res) => {
-      console.log(res);
-      this.getTask();
-    });
+    try {
+      var xhttp = new XMLHttpRequest();
+      xhttp.open("GET", "http://localhost:8080/log_student/"+inpt+"/"+pssw, false);
+      xhttp.setRequestHeader("Content-type", "text/html");
+      xhttp.send();
+      var response = JSON.parse(xhttp.response);
+      console.log(response);
+      console.log(response.E_mail);
+    } catch (error) {
+      alert(error.message);
   }
+  };
   
   return(
     <div>

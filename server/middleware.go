@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/gorilla/mux"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func get_general_announcements(w http.ResponseWriter, r *http.Request) {
@@ -38,16 +39,25 @@ func student_log_in(w http.ResponseWriter, r *http.Request) {
 	password := params["password"]
 
 	var student student
-	if err := db.QueryRow("SELECT * from mdebis.student where username=? and password=?",
-		username, password).Scan(&student.Username, &student.Id, &student.Password,
-		&student.Surname, &student.Dep_name, &student.Grade, &student.Name, &student.Gpa, &student.E_mail); err != nil {
+
+	if err := db.QueryRow("SELECT * from mdebis.student where username=?", username).Scan(&student.Username,
+		&student.Id, &student.Password, &student.Surname, &student.Dep_name, &student.Grade,
+		&student.Name, &student.Gpa, &student.E_mail); err != nil {
 		if err == sql.ErrNoRows {
 			fmt.Println("no student")
+			json.NewEncoder(w).Encode("false")
 			return
 			//return false, nil, student
 		}
+		json.NewEncoder(w).Encode("false")
 		return
 		//return false, nil, student
+	}
+	if bcrypt.CompareHashAndPassword([]byte(student.Password), []byte(password)) != nil {
+		// If the two passwords don't match, return a 401 status
+		fmt.Println("password error")
+		json.NewEncoder(w).Encode("false")
+		return
 	}
 
 	//return true, json_student, student
@@ -55,7 +65,14 @@ func student_log_in(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(student)
 }
-
+func hash_password(password string) []byte {
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), 8)
+	if err != nil {
+		fmt.Printf("error occured when hashing")
+		return nil
+	}
+	return hashedPassword
+}
 func lecturer_log_in(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
 	params := mux.Vars(r)

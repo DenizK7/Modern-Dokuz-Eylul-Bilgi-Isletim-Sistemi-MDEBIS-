@@ -24,14 +24,11 @@ export default function Sidebar(props) {
               setShowModal(false);
             }}
           ></button>
-          <AnnouncmentMainPage></AnnouncmentMainPage>
-          <AnnouncmentMainPage></AnnouncmentMainPage>
-          <AnnouncmentMainPage></AnnouncmentMainPage>
-          <AnnouncmentMainPage></AnnouncmentMainPage>
+          
         </div>
 
         <div className="modal-body">
-          <p>{content}</p>
+        <p>{content}</p>
         </div>
       </div>
     </div>

@@ -12,6 +12,8 @@ import (
 )
 
 func get_general_announcements(w http.ResponseWriter, r *http.Request) {
+	enableCors(&w)
+	fmt.Println("asd")
 	rows, err := db.Query("SELECT * FROM mdebis.generalannouncement")
 	if err != nil {
 		//return false, nil
@@ -26,6 +28,7 @@ func get_general_announcements(w http.ResponseWriter, r *http.Request) {
 		if err := rows.Scan(&announcement.Announcement_id, &announcement.Title, &announcement.Content, &announcement.Link); err != nil {
 			//return false, nil
 		}
+		fmt.Println(announcement.Title)
 		announcements = append(announcements, announcement)
 	}
 	json.NewEncoder(w).Encode(announcements)
@@ -62,7 +65,7 @@ func student_log_in(w http.ResponseWriter, r *http.Request) {
 
 	//return true, json_student, student
 	fmt.Println("found the student :)")
-
+	get_course_announcements(&student)
 	json.NewEncoder(w).Encode(student)
 }
 func hash_password(password string) []byte {

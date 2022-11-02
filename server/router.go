@@ -8,6 +8,7 @@ func Router() *mux.Router {
 	router.HandleFunc("/log_student/{username}/{password}", student_log_in)
 	router.HandleFunc("/log_lecturer/{username}/{password}", lecturer_log_in)
 	router.HandleFunc("/student_forgot/{username}", student_forgot)
+	router.HandleFunc("/get_gen_announcements", get_general_announcements)
 
 	return router
 }

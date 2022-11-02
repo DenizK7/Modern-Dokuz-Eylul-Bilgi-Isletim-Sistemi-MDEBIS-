@@ -1,12 +1,22 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import AnnouncmentMainPage from "./AnnouncmentMainPage";
 export default function Sidebar(props) {
-  const { showModal, setShowModal, content } = props;
-
+  const { showModal, setShowModal } = props;
+  const[content, setContent] = useState([])
+  const[header, setHeader] = useState([])
   useEffect(() => {
-    // call click outside
+    var xhttp = new XMLHttpRequest();
+    xhttp.open("GET", "http://localhost:8080/get_gen_announcements",false);
+    xhttp.setRequestHeader("Content-type", "text/html");
+    xhttp.send();
+    var response = JSON.parse(xhttp.response);
+    console.log(response)
+    setContent(response);
+   
+    
+    
   }, []);
-
+ 
   return (
     <div
       className={showModal ? "modal-dialog show" : "modal-dialog"}
@@ -28,7 +38,11 @@ export default function Sidebar(props) {
         </div>
 
         <div className="modal-body">
-        <p>{content}</p>
+        
+          {
+            content?.map(content => <AnnouncmentMainPage header={content.Title} key ={content.id} content={content.Content}></AnnouncmentMainPage>)
+          }
+        
         </div>
       </div>
     </div>

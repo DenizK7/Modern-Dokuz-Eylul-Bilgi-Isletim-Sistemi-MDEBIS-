@@ -79,13 +79,18 @@ func lecturer_log_in(w http.ResponseWriter, r *http.Request) {
 	username := params["username"]
 	password := params["password"]
 	var lecturer lecturer
-	if err := db.QueryRow("SELECT * from mdebis.lecturer where username=? and password=?",
-		username, password).Scan(&lecturer.Username, &lecturer.Id, &lecturer.Password, &lecturer.Name,
+	if err := db.QueryRow("SELECT * from mdebis.lecturer where username=? and password=?", username).Scan(&lecturer.Username, &lecturer.Id, &lecturer.Password, &lecturer.Name,
 		&lecturer.Surname, &lecturer.Title, &lecturer.Dep_name, &lecturer.E_mail); err != nil {
 		if err == sql.ErrNoRows {
-			//return false, nil
+			return
 		}
-		//return false, nil
+		return
+	}
+	if bcrypt.CompareHashAndPassword([]byte(lecturer.Password), []byte(password)) != nil {
+		// If the two passwords don't match, return a 401 status
+		fmt.Println("password error")
+		json.NewEncoder(w).Encode("false")
+		return
 	}
 	json.NewEncoder(w).Encode(lecturer)
 }

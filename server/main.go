@@ -12,6 +12,7 @@ import (
 /*CONSTANTS CAME HERE
  */
 var db *sql.DB
+var USER *user
 
 func main() {
 	fmt.Println(string(hash_password("354152")))

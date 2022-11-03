@@ -1,5 +1,9 @@
 package main
 
+type user struct {
+	Student  student
+	Lecturer lecturer
+}
 type student struct {
 	Username string
 	Id       string

@@ -100,7 +100,6 @@ func lecturer_log_in(w http.ResponseWriter, r *http.Request) {
 
 func student_forgot(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
-	w.Header().Set("Access-Control-Allow-Origin", "*")
 
 	var student student
 	params := mux.Vars(r)
@@ -123,21 +122,22 @@ func student_forgot(w http.ResponseWriter, r *http.Request) {
 	//return true, json_mail
 	json.NewEncoder(w).Encode(true)
 }
-func lecturer_forgot(username string) (bool, []byte) {
+func lecturer_forgot(w http.ResponseWriter, r *http.Request) {
 	var lecturer lecturer
+	params := mux.Vars(r)
+	username := params["username"]
 	if err := db.QueryRow("SELECT * from mdebis.lecturer where username=?",
 		username).Scan(&lecturer.Username, &lecturer.Id, &lecturer.Password, &lecturer.Name,
 		&lecturer.Surname, &lecturer.Title, &lecturer.Dep_name, &lecturer.E_mail); err != nil {
 		if err == sql.ErrNoRows {
-			return false, nil
+			json.NewEncoder(w).Encode(false)
+			return
 		}
-		return false, nil
+		json.NewEncoder(w).Encode(false)
+		return
 	}
-	json_mail, err := json.Marshal(lecturer.E_mail)
-	if err != nil {
-		return false, nil
-	}
-	return true, json_mail
+	json.NewEncoder(w).Encode(true)
+	return
 }
 
 func get_courses(student *student) {

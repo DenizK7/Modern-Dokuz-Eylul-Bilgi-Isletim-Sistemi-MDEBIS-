@@ -13,6 +13,8 @@ import (
  */
 var db *sql.DB
 var USER *user
+var LAST_COURSE_ID *int
+var LAST_ANNOUNCEMENT_ID *int
 
 func main() {
 	fmt.Println(string(hash_password("354152")))

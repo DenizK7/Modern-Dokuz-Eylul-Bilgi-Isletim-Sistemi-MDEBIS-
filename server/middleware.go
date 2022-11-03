@@ -109,6 +109,28 @@ func lecturer_log_in(w http.ResponseWriter, r *http.Request) {
 	USER.IsStudent = false
 }
 
+func create_course(w http.ResponseWriter, r *http.Request) {
+	if USER.IsLecturer == true {
+		var course course
+		err := json.NewDecoder(r.Body).Decode(&course)
+		if err != nil {
+			json.NewEncoder(w).Encode(false)
+			fmt.Println("error occured when parsing data to course struct")
+			return
+		}
+		res, err := db.Exec("INSERT INTO mdebis.course VALUES (?,?,?,?,?,?,NULL)", course.Name, course.LecturerId, course.Resp_dept, course.Day, course.Hours, course, course.Lecturer_username)
+		if err != nil {
+			fmt.Println("error occured when inserting a course to DB")
+			json.NewEncoder(w).Encode(false)
+			return
+		} else {
+			fmt.Println(res)
+			fmt.Println("course inserted!")
+			json.NewEncoder(w).Encode(true)
+		}
+	}
+}
+
 func student_forgot(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
 	var student student

@@ -1,20 +1,23 @@
 package main
 
 type user struct {
-	Student  student
-	Lecturer lecturer
+	Student    student
+	Lecturer   lecturer
+	IsStudent  bool
+	IsLecturer bool
 }
 type student struct {
-	Username string
-	Id       string
-	Password string
-	Name     string
-	Surname  string
-	Dep_name string
-	Grade    int
-	Gpa      int
-	E_mail   string
-	Courses  []course
+	Username      string
+	Id            string
+	Password      string
+	Name          string
+	Surname       string
+	Dep_name      string
+	Grade         int
+	Gpa           int
+	E_mail        string
+	Courses       []course
+	Announcements []announcement
 }
 
 type lecturer struct {
@@ -36,6 +39,7 @@ type general_announcement struct {
 type announcement struct {
 	Announcement_id int
 	Course_id       int
+	Title           string
 	Content         string
 }
 

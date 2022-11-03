@@ -16,7 +16,7 @@ func get_general_announcements(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("asd")
 	rows, err := db.Query("SELECT * FROM mdebis.generalannouncement")
 	if err != nil {
-		//return false, nil
+		fmt.Println("error occured when getting general announcements")
 	}
 	defer rows.Close()
 
@@ -26,7 +26,8 @@ func get_general_announcements(w http.ResponseWriter, r *http.Request) {
 	for rows.Next() {
 		var announcement general_announcement
 		if err := rows.Scan(&announcement.Announcement_id, &announcement.Title, &announcement.Content, &announcement.Link); err != nil {
-			//return false, nil
+			fmt.Println("error occured when getting general announcements")
+
 		}
 		fmt.Println(announcement.Title)
 		announcements = append(announcements, announcement)
@@ -47,7 +48,8 @@ func student_log_in(w http.ResponseWriter, r *http.Request) {
 		&student.Id, &student.Password, &student.Surname, &student.Dep_name, &student.Grade,
 		&student.Name, &student.Gpa, &student.E_mail); err != nil {
 		if err == sql.ErrNoRows {
-			fmt.Println("no student")
+			fmt.Println("error occured when finding the student")
+
 			json.NewEncoder(w).Encode("false")
 			return
 			//return false, nil, student
@@ -65,8 +67,12 @@ func student_log_in(w http.ResponseWriter, r *http.Request) {
 
 	//return true, json_student, student
 	fmt.Println("found the student :)")
-	get_course_announcements(&student)
 	json.NewEncoder(w).Encode(student)
+	USER.Student = student
+	USER.IsLecturer = false
+	USER.IsStudent = true
+	get_courses(&student)
+	get_course_announcements(&student)
 }
 func hash_password(password string) []byte {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), 8)
@@ -85,22 +91,26 @@ func lecturer_log_in(w http.ResponseWriter, r *http.Request) {
 	if err := db.QueryRow("SELECT * from mdebis.lecturer where username=? and password=?", username).Scan(&lecturer.Username, &lecturer.Id, &lecturer.Password, &lecturer.Name,
 		&lecturer.Surname, &lecturer.Title, &lecturer.Dep_name, &lecturer.E_mail); err != nil {
 		if err == sql.ErrNoRows {
+			fmt.Println("error occured when finding lecturer")
 			return
 		}
+		fmt.Println("error occured when finding the lecturer")
 		return
 	}
 	if bcrypt.CompareHashAndPassword([]byte(lecturer.Password), []byte(password)) != nil {
 		// If the two passwords don't match, return a 401 status
-		fmt.Println("password error")
+		fmt.Println("password wrong")
 		json.NewEncoder(w).Encode("false")
 		return
 	}
 	json.NewEncoder(w).Encode(lecturer)
+	USER.Lecturer = lecturer
+	USER.IsLecturer = true
+	USER.IsStudent = false
 }
 
 func student_forgot(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
-
 	var student student
 	params := mux.Vars(r)
 	username := params["username"]
@@ -110,16 +120,13 @@ func student_forgot(w http.ResponseWriter, r *http.Request) {
 		&student.Surname, &student.Dep_name, &student.Grade, &student.Name, &student.Gpa, &student.E_mail); err != nil {
 		if err == sql.ErrNoRows {
 			json.NewEncoder(w).Encode(false)
-			fmt.Println("NO STUDENT")
+			fmt.Println("error occured when finding the student")
 			return
-			//return false, nil
 		}
-		fmt.Println("NO STUDENT")
+		fmt.Println("error occured when finding the student")
 		return
-		//return false, nil
 	}
 	fmt.Println("mail sent")
-	//return true, json_mail
 	json.NewEncoder(w).Encode(true)
 }
 func lecturer_forgot(w http.ResponseWriter, r *http.Request) {
@@ -131,38 +138,54 @@ func lecturer_forgot(w http.ResponseWriter, r *http.Request) {
 		&lecturer.Surname, &lecturer.Title, &lecturer.Dep_name, &lecturer.E_mail); err != nil {
 		if err == sql.ErrNoRows {
 			json.NewEncoder(w).Encode(false)
-			return
+			fmt.Println("error occured when finding the lecturer")
+
 		}
 		json.NewEncoder(w).Encode(false)
-		return
+		fmt.Println("error occured when finding the lecturer")
 	}
 	json.NewEncoder(w).Encode(true)
 	return
 }
 
+func handler_get_courses(w http.ResponseWriter, r *http.Request) {
+	if USER.IsStudent == true {
+		if USER.Student.Courses == nil {
+			get_courses(&USER.Student)
+		}
+		json.NewEncoder(w).Encode(USER.Student.Courses)
+	}
+}
+
 func get_courses(student *student) {
 	rows, err := db.Query("SELECT * from mdebis.course where idCourse=(SELECT idCourse FROM mdebis.course_has_student WHERE idStudent=?);", student.Id)
 	if err != nil {
-		//return nil
+		fmt.Println("error occured when getting courses")
 	}
 	defer rows.Close()
 
 	var courses []course
 
-	// Loop through rows, using Scan to assign column data to struct fields.
 	for rows.Next() {
 		var course course
 		if err := rows.Scan(&course.Id, &course.Name, &course.LecturerId, &course.Resp_dept, &course.Day, &course.Hours, &course.Lecturer_username); err != nil {
-			//	return nil
+			fmt.Println("error occured when getting courses")
 		}
 		courses = append(courses, course)
 	}
 	student.Courses = courses
-	//json_courses, err := json.MarshalIndent(courses, "", "")
-	//return json_courses
 
 }
-func get_course_announcements(student *student) []byte {
+
+func handler_get_course_announcements(w http.ResponseWriter, r *http.Request) {
+	if USER.IsStudent == true {
+		if USER.Student.Announcements == nil {
+			get_course_announcements(&USER.Student)
+		}
+		json.NewEncoder(w).Encode(&USER.Student.Announcements)
+	}
+}
+func get_course_announcements(student *student) {
 	if student.Courses == nil {
 		get_courses(student)
 	}
@@ -174,21 +197,17 @@ func get_course_announcements(student *student) []byte {
 	}
 	rows, err := db.Query("SELECT * from mdebis.announcement where Course_idCourse IN (?)", strings.Join(course_ids, ","))
 	if err != nil {
-		return nil
+		fmt.Println("error occured when getting announcements")
 	}
 	defer rows.Close()
 	var announcements []announcement
 	// Loop on rows, using Scan to assign column data to struct fields.
 	for rows.Next() {
 		var announcement announcement
-		if err := rows.Scan(&announcement.Announcement_id, &announcement.Course_id, &announcement.Content); err != nil {
-			return nil
+		if err := rows.Scan(&announcement.Announcement_id, &announcement.Course_id, &announcement.Content, &announcement.Title); err != nil {
+			fmt.Println("error occured when getting announcements")
 		}
 		announcements = append(announcements, announcement)
 	}
-	json_announcements, err := json.MarshalIndent(announcements, " ", " ")
-	if err != nil {
-		fmt.Println("error when converting to json")
-	}
-	return json_announcements
+	student.Announcements = announcements
 }

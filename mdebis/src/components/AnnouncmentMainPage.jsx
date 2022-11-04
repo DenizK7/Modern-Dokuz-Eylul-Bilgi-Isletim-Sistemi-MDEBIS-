@@ -1,15 +1,14 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 
-const AnnouncmentMainPage =({key, header, content}) =>{
+const AnnouncmentMainPage =({key, header, content,Link}) =>{
   const [showModal, setShowModal] = useState(false);
-  
 return (
   <div className="anc-main" key = {key}>
-     
-     <h1 className="modal-title" id="myModalLabel" style={{fontSize: "15px"}}>
-            {header}
-      </h1>
+    <h1  className="modal-title" id="myModalLabel" style={{fontSize: "15px"}}>
+    <a target="_blank" href={Link}>{header}
+      </a></h1>
      <p className={showModal ? "anc-main-long" : "anc-main-short"}>
           {content}
           </p>

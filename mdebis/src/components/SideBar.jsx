@@ -11,12 +11,12 @@ export default function Sidebar(props) {
     xhttp.send();
     var response = JSON.parse(xhttp.response);
     console.log(response)
+
     setContent(response);
    
     
     
   }, []);
- 
   return (
     <div
       className={showModal ? "modal-dialog show" : "modal-dialog"}
@@ -40,7 +40,7 @@ export default function Sidebar(props) {
         <div className="modal-body">
         
           {
-            content?.map(content => <AnnouncmentMainPage header={content.Title} key ={content.id} content={content.Content}></AnnouncmentMainPage>)
+            content?.map(content => <AnnouncmentMainPage header={content.Title} key ={content.id} content={content.Content} Link={content.Link}></AnnouncmentMainPage>)
           }
         
         </div>

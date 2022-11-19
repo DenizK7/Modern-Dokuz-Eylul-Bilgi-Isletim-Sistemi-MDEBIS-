@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	_ "github.com/go-sql-driver/mysql"
+	"golang.org/x/crypto/bcrypt"
 )
 
 /*CONSTANTS CAME HERE
@@ -27,11 +28,19 @@ func main() {
 	if err != nil {
 		panic(err.Error())
 	}
+
 	r := Router()
 	fmt.Println("Starting server on the port 8080...")
 	log.Fatal(http.ListenAndServe(":8080", r))
 }
-
+func hash_password_(password string) []byte {
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), 8)
+	if err != nil {
+		fmt.Printf("error occured when hashing")
+		return nil
+	}
+	return hashedPassword
+}
 func enableCors(w *http.ResponseWriter) {
 	(*w).Header().Set("Access-Control-Allow-Origin", "*")
 	(*w).Header().Set("Access-Control-Allow-Headers", "Content-Type")

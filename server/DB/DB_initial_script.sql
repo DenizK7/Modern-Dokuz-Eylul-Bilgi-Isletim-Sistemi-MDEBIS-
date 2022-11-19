@@ -7,117 +7,222 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 -- -----------------------------------------------------
 -- Schema mydb
 -- -----------------------------------------------------
--- -----------------------------------------------------
--- Schema mdebis
--- -----------------------------------------------------
 
 -- -----------------------------------------------------
--- Schema mdebis
+-- Schema mydb
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `mdebis` DEFAULT CHARACTER SET utf8mb3 ;
-USE `mdebis` ;
+CREATE SCHEMA IF NOT EXISTS `MDEBIS` DEFAULT CHARACTER SET utf8 ;
+USE `MDEBIS` ;
 
 -- -----------------------------------------------------
--- Table `mdebis`.`announcement`
+-- Table `MDEBIS`.`Lecturer`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mdebis`.`announcement` (
-  `announcementID`  NOT NULL,
-  `Course_idCourse`  NOT NULL,
-  `content` LONGTEXT NOT NULL,
-  PRIMARY KEY (`announcementID`),
-  INDEX `fk_Announcement_Course1_idx` (`Course_idCourse` ASC) VISIBLE)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb3;
-
-
--- -----------------------------------------------------
--- Table `mdebis`.`lecturer`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mdebis`.`lecturer` (
-  `username` VARCHAR(45) NOT NULL,
-  `idLecturer`  NOT NULL,
-  `password` VARCHAR(45) NOT NULL,
-  `name` VARCHAR(45) NOT NULL,
-  `surname` VARCHAR(45) NOT NULL,
-  `title` VARCHAR(45) NOT NULL,
-  `depName` VARCHAR(45) NOT NULL,
-  `e_mail` VARCHAR(45) NULL DEFAULT NULL,
-  PRIMARY KEY (`username`))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb3;
+CREATE TABLE IF NOT EXISTS `MDEBIS`.`Lecturer` (
+  `Lecturer_Id` INT NOT NULL,
+  `Password` VARCHAR(1000) NOT NULL,
+  `Name` VARCHAR(45) NOT NULL,
+  `Surname` VARCHAR(45) NOT NULL,
+  `Mail` VARCHAR(45) NULL,
+  `Department_Id` INT NOT NULL,
+  `Title` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`Lecturer_Id`))
+ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mdebis`.`course`
+-- Table `MDEBIS`.`Department`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mdebis`.`course` (
-  `idCourse`  NOT NULL,
-  `name` VARCHAR(45) NULL DEFAULT NULL,
-  `Lecturer_idLecturer`  NULL DEFAULT NULL,
-  `respDept` VARCHAR(45) NULL DEFAULT NULL,
-  `day` VARCHAR(45) NULL DEFAULT NULL,
-  `hours` VARCHAR(45) NULL DEFAULT NULL,
-  `Lecturer_username` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`idCourse`),
-  INDEX `fk_Course_Lecturer1_idx` (`Lecturer_username` ASC) VISIBLE,
-  CONSTRAINT `fk_Course_Lecturer1`
-    FOREIGN KEY (`Lecturer_username`)
-    REFERENCES `mdebis`.`lecturer` (`username`))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb3;
+CREATE TABLE IF NOT EXISTS `MDEBIS`.`Department` (
+  `Department_Id` INT NOT NULL,
+  `Head_Lecturer_Id` INT NOT NULL,
+  `Name` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`Department_Id`),
+  INDEX `fk_Department_Lecturer1_idx` (`Head_Lecturer_Id` ASC) VISIBLE,
+  CONSTRAINT `fk_Department_Lecturer1`
+    FOREIGN KEY (`Head_Lecturer_Id`)
+    REFERENCES `MDEBIS`.`Lecturer` (`Lecturer_Id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mdebis`.`student`
+-- Table `MDEBIS`.`Course`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mdebis`.`student` (
-  `username` VARCHAR(45) NOT NULL,
-  `idStudent`  NOT NULL,
-  `password` VARCHAR(45) NOT NULL,
-  `surname` VARCHAR(45) NOT NULL,
-  `depName` VARCHAR(45) NOT NULL,
-  `grade`  NOT NULL,
-  `name` VARCHAR(45) NOT NULL,
-  `GPA` FLOAT NULL DEFAULT NULL,
-  `e_mail` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`username`),
-  UNIQUE INDEX `idStudent_UNIQUE` (`idStudent` ASC) VISIBLE)
-ENGINE = InnoDB
-AUTO_INCREMENT = 2
-DEFAULT CHARACTER SET = utf8mb3;
+CREATE TABLE IF NOT EXISTS `MDEBIS`.`Course` (
+  `Course_Id` INT NOT NULL,
+  `Name` VARCHAR(45) NOT NULL,
+  `Departmend_Ids` INT NOT NULL,
+  `Attandence_Limit` INT NOT NULL,
+  `Student_Ids` TEXT(500) NOT NULL,
+  `Days` VARCHAR(40) NOT NULL,
+  `Hours` VARCHAR(40) NOT NULL,
+  PRIMARY KEY (`Course_Id`),
+  INDEX `fk_Course_Department1_idx` (`Departmend_Ids` ASC) VISIBLE,
+  CONSTRAINT `fk_Course_Department1`
+    FOREIGN KEY (`Departmend_Ids`)
+    REFERENCES `MDEBIS`.`Department` (`Department_Id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mdebis`.`course_has_student`
+-- Table `MDEBIS`.`Student`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mdebis`.`course_has_student` (
-  `idCourse`  NOT NULL,
-  `idStudent`  NOT NULL,
-  PRIMARY KEY (`idCourse`, `idStudent`),
-  INDEX `fk_Course_has_Student_Student1_idx` (`idStudent` ASC) VISIBLE,
-  INDEX `fk_Course_has_Student_Course1_idx` (`idCourse` ASC) VISIBLE,
-  CONSTRAINT `fk_Course_has_Student_Course1`
-    FOREIGN KEY (`idCourse`)
-    REFERENCES `mdebis`.`course` (`idCourse`),
+CREATE TABLE IF NOT EXISTS `MDEBIS`.`Student` (
+  `Student_Id` INT NOT NULL,
+  `Password` VARCHAR(1000) NOT NULL,
+  `Name` VARCHAR(45) NOT NULL,
+  `Surname` VARCHAR(45) NOT NULL,
+  `Year` INT NOT NULL,
+  `GPA` FLOAT NULL,
+  `Department_Id` INT NOT NULL,
+  `Mail` VARCHAR(70) NULL,
+  `Course_Ids` VARCHAR(70) NULL,
+  PRIMARY KEY (`Student_Id`),
+  INDEX `fk_Student_Department1_idx` (`Department_Id` ASC) VISIBLE,
+  CONSTRAINT `fk_Student_Department1`
+    FOREIGN KEY (`Department_Id`)
+    REFERENCES `MDEBIS`.`Department` (`Department_Id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `MDEBIS`.`Course_has_Student`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `MDEBIS`.`Course_has_Student` (
+  `Course_Id` INT NOT NULL,
+  `Student_Id` INT NOT NULL,
+  `Situtation` ENUM("Passed", "Current", "Failed") NOT NULL DEFAULT 'Current',
+  `Non_Attendance` INT NOT NULL DEFAULT 0,
+  `Grade` ENUM("AA", "BA", "BB", "CB", "CC", "DC", "DD", "FD", "FF") NULL,
+  PRIMARY KEY (`Course_Id`, `Student_Id`, `Non_Attendance`),
+  INDEX `fk_Course_has_Student_Student1_idx` (`Student_Id` ASC) VISIBLE,
+  INDEX `fk_Course_has_Student_Course_idx` (`Course_Id` ASC) VISIBLE,
+  CONSTRAINT `fk_Course_has_Student_Course`
+    FOREIGN KEY (`Course_Id`)
+    REFERENCES `MDEBIS`.`Course` (`Course_Id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
   CONSTRAINT `fk_Course_has_Student_Student1`
-    FOREIGN KEY (`idStudent`)
-    REFERENCES `mdebis`.`student` (`idStudent`))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb3;
+    FOREIGN KEY (`Student_Id`)
+    REFERENCES `MDEBIS`.`Student` (`Student_Id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mdebis`.`generalannouncement`
+-- Table `MDEBIS`.`Add_Drop_Requests`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mdebis`.`generalannouncement` (
-  `idgeneralAnnouncement`  NOT NULL,
-  `title`  NULL DEFAULT NULL,
-  `content` LONGTEXT NULL DEFAULT NULL,
-  `link` VARCHAR(200) NULL DEFAULT NULL,
-  PRIMARY KEY (`idgeneralAnnouncement`))
-ENGINE = InnoDB
-AUTO_INCREMENT = 3
-DEFAULT CHARACTER SET = utf8mb3;
+CREATE TABLE IF NOT EXISTS `MDEBIS`.`Add_Drop_Requests` (
+  `Request_Id` INT NOT NULL,
+  `Student_Id` INT NOT NULL,
+  `Responsible_Lecturer_Id` INT NOT NULL,
+  PRIMARY KEY (`Request_Id`, `Student_Id`, `Responsible_Lecturer_Id`),
+  INDEX `fk_Add_Drop_Requests_Student1_idx` (`Student_Id` ASC) VISIBLE,
+  INDEX `fk_Add_Drop_Requests_Lecturer1_idx` (`Responsible_Lecturer_Id` ASC) VISIBLE,
+  CONSTRAINT `fk_Add_Drop_Requests_Student1`
+    FOREIGN KEY (`Student_Id`)
+    REFERENCES `MDEBIS`.`Student` (`Student_Id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Add_Drop_Requests_Lecturer1`
+    FOREIGN KEY (`Responsible_Lecturer_Id`)
+    REFERENCES `MDEBIS`.`Lecturer` (`Lecturer_Id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `MDEBIS`.`Manager`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `MDEBIS`.`Manager` (
+  `Manager_Id` INT NOT NULL,
+  `Password` VARCHAR(1000) NOT NULL,
+  `Name` VARCHAR(45) NOT NULL,
+  `Surname` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`Manager_Id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `MDEBIS`.`Course_has_Lecturer`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `MDEBIS`.`Course_has_Lecturer` (
+  `Course_Course_Id` INT NOT NULL,
+  `Lecturer_Lecturer_Id` INT NOT NULL,
+  PRIMARY KEY (`Course_Course_Id`, `Lecturer_Lecturer_Id`),
+  INDEX `fk_Course_has_Lecturer_Lecturer1_idx` (`Lecturer_Lecturer_Id` ASC) VISIBLE,
+  INDEX `fk_Course_has_Lecturer_Course1_idx` (`Course_Course_Id` ASC) VISIBLE,
+  CONSTRAINT `fk_Course_has_Lecturer_Course1`
+    FOREIGN KEY (`Course_Course_Id`)
+    REFERENCES `MDEBIS`.`Course` (`Course_Id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Course_has_Lecturer_Lecturer1`
+    FOREIGN KEY (`Lecturer_Lecturer_Id`)
+    REFERENCES `MDEBIS`.`Lecturer` (`Lecturer_Id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `MDEBIS`.`Add_Drop_Requests_has_Course`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `MDEBIS`.`Add_Drop_Requests_has_Course` (
+  `Add_Drop_Requests_Request_Id` INT NOT NULL,
+  `Course_Course_Id` INT NOT NULL,
+  PRIMARY KEY (`Add_Drop_Requests_Request_Id`, `Course_Course_Id`),
+  INDEX `fk_Add_Drop_Requests_has_Course_Course1_idx` (`Course_Course_Id` ASC) VISIBLE,
+  INDEX `fk_Add_Drop_Requests_has_Course_Add_Drop_Requests1_idx` (`Add_Drop_Requests_Request_Id` ASC) VISIBLE,
+  CONSTRAINT `fk_Add_Drop_Requests_has_Course_Add_Drop_Requests1`
+    FOREIGN KEY (`Add_Drop_Requests_Request_Id`)
+    REFERENCES `MDEBIS`.`Add_Drop_Requests` (`Request_Id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Add_Drop_Requests_has_Course_Course1`
+    FOREIGN KEY (`Course_Course_Id`)
+    REFERENCES `MDEBIS`.`Course` (`Course_Id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `MDEBIS`.`General_Announcements`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `MDEBIS`.`General_Announcements` (
+  `General_Announcements_Id` INT NOT NULL,
+  `Title` TINYTEXT NOT NULL,
+  `Content` LONGTEXT NOT NULL,
+  `link` VARCHAR(1000) NULL,
+  PRIMARY KEY (`General_Announcements_Id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `MDEBIS`.`Course_Announcements`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `MDEBIS`.`Course_Announcements` (
+  `Course_Announcements_Id` INT NOT NULL,
+  `Course_Course_Id` INT NOT NULL,
+  `Title` TINYTEXT NOT NULL,
+  `Content` LONGTEXT NOT NULL,
+  `link` VARCHAR(1000) NOT NULL,
+  PRIMARY KEY (`Course_Announcements_Id`, `Course_Course_Id`),
+  INDEX `fk_Course_Announcements_Course1_idx` (`Course_Course_Id` ASC) VISIBLE,
+  CONSTRAINT `fk_Course_Announcements_Course1`
+    FOREIGN KEY (`Course_Course_Id`)
+    REFERENCES `MDEBIS`.`Course` (`Course_Id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
 
 
 SET SQL_MODE=@OLD_SQL_MODE;

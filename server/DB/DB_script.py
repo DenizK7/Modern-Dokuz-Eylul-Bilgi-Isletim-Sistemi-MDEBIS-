@@ -41,24 +41,39 @@ def fill_randomly(connection):
 
     ##Insert  randomly 20 new departments
     sql = "INSERT INTO MDEBIS.student (Student_Id, Password,Name,Surname,Year,GPA,Department_Id,Mail,Course_Ids) VALUES (%s, %s,%s,%s,%s,%s,%s,%s,%s)"
-    id=1
-    password='354152'
-    for i in range(80000):
+    ids=[]
+    for i in range(75000):
+        if i%750==0:
+            print("%"+str((i/75000)*100)+" completed")
+        password=rnd.randint(100000,999999)
+        dep_id=rnd.randint(1,17)
+        id1=str(rnd.randint(2016,2022))
+        id2=str(500+dep_id)
+        id3=str(rnd.randint(100,999))
+        id=id1+id2+id3
+        while id in ids:
+            dep_id=rnd.randint(1,17)
+            id1=str(rnd.randint(2016,2022))
+            id2=str(500+dep_id)
+            id3=str(rnd.randint(100,999))
+            id=id1+id2+id3
         name=names.get_first_name()
         surname=names.get_last_name()
-        year=rnd.randint(1,4)
+        year=2023-int(id1)
         gpa=rnd.random()*4
-        mail=name+"."+surname+"@deu.edu.tr"
+        mail=name.lower()+"."+surname.lower()+"@ogr.deu.edu.tr"
         courses=""
-        dep_id=rnd.randint(1,16)
-        for i in range(5):
-            courses+=str(rnd.randint(1,10)+10*dep_id)+";"
+        for i in range(4*year):
+            new_course=str((rnd.randint(1,35))+(35*(dep_id-1)))
+            while new_course in courses.split(";"):
+                new_course=str((rnd.randint(1,35))+(35*(dep_id-1)))
+                
+            courses+=new_course+";"
 
         val = (id,password,name,surname,year,gpa,dep_id,mail,courses)
         cursor.execute(sql, val)
         connection.commit()
-        id=id+1
-     
+        ids.append(id)
     end = time.time() 
     print ("Time elapsed to run the query:")
     print (str((end - start)*1000) + ' ms')
@@ -79,7 +94,6 @@ def fill_course_has_student(connection):
         for course_id in student_courses:
             if course_id=='':
                 continue
-            course_id_=int(course_id)
             situtation=situtations[rnd.randint(0,2)]
             grade="0"
             if situtation=="Passed":
@@ -102,21 +116,24 @@ def add_lecturers(connection):
 
     ##Insert  randomly 20 new departments
     sql = "INSERT INTO MDEBIS.lecturer (Lecturer_Id, Password,Name,Surname,Mail,Department_Id,Title) VALUES (%s, %s,%s,%s,%s,%s,%s)"
-    id=19
     titles=["Assoc. Prof. Dr.","Prof. Dr.","Dr.","Lecturer","Research Assistant","Asst. Prof. Dr."]
     for i in range(400):
         name=names.get_first_name()
         surname=names.get_last_name()
         password=str(rnd.randint(100000,999999))
-        mail=name+"."+surname+"@deu.edu.tr"
 
-        dep_id=17
+        dep_id=rnd.randint(1,17)
+        id1=str(rnd.randint(2000,2022))
+        id2=str(500+dep_id)
+        id3=str(rnd.randint(100,999))
+        id=id1+id2+id3
+        mail=name.lower()+"."+surname.lower()+"@deu.edu.tr"
+
         title=titles[rnd.randint(0,5)]
 
         val = (id,password,name,surname,mail,dep_id,title)
         cursor.execute(sql, val)
         connection.commit()
-        id=id+1
      
     end = time.time() 
     print ("Time elapsed to run the query:")
@@ -132,12 +149,11 @@ def add_course(connection):
     cursor.execute(foreing_constraint)
     start = time.time() 
 
-    ##Insert  randomly 20 new departments
-    sql = "INSERT INTO MDEBIS.course (Course_Id,Name,Departmend_Ids,Attandence_Limit,Student_Ids,Days,Hours) VALUES (%s, %s,%s,%s,%s,%s,%s)"
-    id=161
+    sql = "INSERT INTO MDEBIS.course (Course_Id,Name,Departmend_Ids,Attandence_Limit,Days,Hours,Credit) VALUES (%s, %s,%s,%s,%s,%s,%s)"
     given_days=""
     given_hours=""
-    for i in range(160,170):
+    for i in range(1,596):
+        id=i
         print(i)
         name="Course Name"
         attandence=rnd.randint(-1,4) #-1 indicates free of attendence
@@ -165,13 +181,17 @@ def add_course(connection):
 
             break
 
-        dep_id=int(id/10)
+        dep_id=int(id/35)+1
 
-        val = (id,name,dep_id,attandence,"",days,hours)
+        if id%35==0:
+            dep_id=dep_id-1
+
+        credit=rnd.randint(0,4)
+        val = (id,name,dep_id,attandence,days,hours,credit)
         cursor.execute(sql, val)
         given_days=given_days+days+"|"
         given_hours=given_hours+hours+"|"
-        if id%10==0:
+        if id%35==0:
             given_days=""
             given_hours=""
         connection.commit()
@@ -212,10 +232,18 @@ def fill_course_has_lecturers(connection):
 
             lecturer_ids.append(chosen_lec_id)
             
-            sql = "INSERT INTO MDEBIS.course_has_lecturer (Course_Course_Id,Lecturer_Lecturer_Id) VALUES (%s, %s)"
-            val = (int(course_id),int(chosen_lec_id))
-            cursor.execute(sql, val)
-            connection.commit()
+        sql = "INSERT INTO MDEBIS.course_has_lecturer (Course_Course_Id,Lecturer_Lecturer_Id) VALUES (%s, %s)"
+        val = (int(course_id),int(chosen_lec_id))
+        cursor.execute(sql, val)
+        connection.commit()
+
+def add_course_credits(connection):
+    cursor=connection.cursor()
+    cursor.execute("SELECT * FROM course")
+    myresult = cursor.fetchall()
+
+    credits=[rnd.randint(1,8) for x in range(170)]
+
 
 
 
@@ -225,12 +253,18 @@ def main():
         user="root",
         password="354152",
         database='MDEBIS')
-    
+    cursor = mydb.cursor()
+    cursor.execute("select * from MDEBIS.student")
+    myresult=cursor.fetchall()
+    for row in myresult:
+        student_id=row[0]
+        passw=rnd.randint(100000,999999)
+        cursor.execute("UPDATE MDEBIS.student SET Password=%s where student.Student_Id=%s",[passw,student_id])
+        mydb.commit()
     #run_sql_file("C:\\Users\\emirc\\Desktop\\CENG\\DB\\term_project\\Modern-Dokuz--Eylul-Bilgi-Isletim-Sistemi-MDEBIS-\\server\\DB\\DB_initial_script.sql",mydb)
     #fill_randomly(mydb)
-    #add_course(mydb)
-    #fill_course_has_student(mydb)
     #add_lecturers(mydb)
+    #add_course(mydb)
     #fill_course_has_student(mydb)
     #fill_course_has_lecturers(mydb)
 if __name__ == "__main__": 

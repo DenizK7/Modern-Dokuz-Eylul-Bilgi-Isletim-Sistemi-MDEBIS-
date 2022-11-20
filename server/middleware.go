@@ -44,9 +44,9 @@ func student_log_in(w http.ResponseWriter, r *http.Request) {
 
 	var student student
 
-	if err := db.QueryRow("SELECT * from mdebis.student where username=?", username).Scan(&student.Username,
-		&student.Id, &student.Password, &student.Surname, &student.Dep_name, &student.Grade,
-		&student.Name, &student.Gpa, &student.E_mail); err != nil {
+	if err := db.QueryRow("SELECT * from mdebis.student where username=?", username).Scan(&student.Id,
+		&student.Password, &student.Name, &student.Surname, &student.Year, &student.Dep_Id,
+		&student.E_mail, &student.Gpa); err != nil {
 		if err == sql.ErrNoRows {
 			fmt.Println("error occured when finding the student")
 
@@ -82,32 +82,6 @@ func hash_password(password string) []byte {
 	}
 	return hashedPassword
 }
-func lecturer_log_in(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
-	params := mux.Vars(r)
-	username := params["username"]
-	password := params["password"]
-	var lecturer lecturer
-	if err := db.QueryRow("SELECT * from mdebis.lecturer where username=? and password=?", username).Scan(&lecturer.Username, &lecturer.Id, &lecturer.Password, &lecturer.Name,
-		&lecturer.Surname, &lecturer.Title, &lecturer.Dep_name, &lecturer.E_mail); err != nil {
-		if err == sql.ErrNoRows {
-			fmt.Println("error occured when finding lecturer")
-			return
-		}
-		fmt.Println("error occured when finding the lecturer")
-		return
-	}
-	if bcrypt.CompareHashAndPassword([]byte(lecturer.Password), []byte(password)) != nil {
-		// If the two passwords don't match, return a 401 status
-		fmt.Println("password wrong")
-		json.NewEncoder(w).Encode("false")
-		return
-	}
-	json.NewEncoder(w).Encode(lecturer)
-	USER.Lecturer = lecturer
-	USER.IsLecturer = true
-	USER.IsStudent = false
-}
 
 func create_course(w http.ResponseWriter, r *http.Request) {
 	if USER.IsLecturer == true {
@@ -138,8 +112,8 @@ func student_forgot(w http.ResponseWriter, r *http.Request) {
 	username := params["username"]
 
 	if err := db.QueryRow("SELECT * from mdebis.student where username=?",
-		username).Scan(&student.Username, &student.Id, &student.Password,
-		&student.Surname, &student.Dep_name, &student.Grade, &student.Name, &student.Gpa, &student.E_mail); err != nil {
+		username).Scan(&student.Id, &student.Password, &student.Name,
+		&student.Surname, &student.Year, &student.Dep_Id, &student.E_mail, &student.Gpa); err != nil {
 		if err == sql.ErrNoRows {
 			json.NewEncoder(w).Encode(false)
 			fmt.Println("error occured when finding the student")
@@ -150,24 +124,6 @@ func student_forgot(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Println("mail sent")
 	json.NewEncoder(w).Encode(true)
-}
-func lecturer_forgot(w http.ResponseWriter, r *http.Request) {
-	var lecturer lecturer
-	params := mux.Vars(r)
-	username := params["username"]
-	if err := db.QueryRow("SELECT * from mdebis.lecturer where username=?",
-		username).Scan(&lecturer.Username, &lecturer.Id, &lecturer.Password, &lecturer.Name,
-		&lecturer.Surname, &lecturer.Title, &lecturer.Dep_name, &lecturer.E_mail); err != nil {
-		if err == sql.ErrNoRows {
-			json.NewEncoder(w).Encode(false)
-			fmt.Println("error occured when finding the lecturer")
-
-		}
-		json.NewEncoder(w).Encode(false)
-		fmt.Println("error occured when finding the lecturer")
-	}
-	json.NewEncoder(w).Encode(true)
-	return
 }
 
 func handler_get_courses(w http.ResponseWriter, r *http.Request) {

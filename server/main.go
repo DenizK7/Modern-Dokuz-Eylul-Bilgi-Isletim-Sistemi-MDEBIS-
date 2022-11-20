@@ -3,7 +3,6 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	"log"
 	"net/http"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -29,9 +28,23 @@ func main() {
 		panic(err.Error())
 	}
 
-	r := Router()
-	fmt.Println("Starting server on the port 8080...")
-	log.Fatal(http.ListenAndServe(":8080", r))
+	rows, err := db.Query("SELECT * from MDEBIS.lecturer")
+	for rows.Next() {
+		var lecturer lecturer
+		if err := rows.Scan(&lecturer.Id, &lecturer.Password, &lecturer.Name, &lecturer.Surname, &lecturer.E_mail, &lecturer.Dep_id, &lecturer.E_mail); err != nil {
+			fmt.Println("error occured when getting courses")
+		}
+		lecturer.Password = string(hash_password_(lecturer.Password))
+		res, err := db.Exec("UPDATE MDEBIS.lecturer SET Password=? where Lecturer_Id=?;", lecturer.Password, lecturer.Id)
+		if err != nil {
+
+		}
+		if res != nil {
+
+		}
+
+	}
+
 }
 func hash_password_(password string) []byte {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), 8)

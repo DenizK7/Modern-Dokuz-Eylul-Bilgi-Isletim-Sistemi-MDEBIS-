@@ -7,27 +7,26 @@ type user struct {
 	IsLecturer bool
 }
 type student struct {
-	Username      string
 	Id            string
 	Password      string
 	Name          string
 	Surname       string
-	Dep_name      string
+	Year          int
 	Grade         int
-	Gpa           int
+	Gpa           float32
 	E_mail        string
+	Dep_Id        int
 	Courses       []course
 	Announcements []announcement
 }
 
 type lecturer struct {
-	Username string
 	Id       string
 	Password string
 	Name     string
 	Surname  string
 	Title    string
-	Dep_name string
+	Dep_id   int
 	E_mail   string
 }
 type general_announcement struct {

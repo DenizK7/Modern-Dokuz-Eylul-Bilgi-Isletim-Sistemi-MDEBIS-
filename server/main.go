@@ -17,7 +17,7 @@ var LAST_COURSE_ID *int
 var LAST_ANNOUNCEMENT_ID *int
 
 func main() {
-	fmt.Println(string(hash_password("354152")))
+	fmt.Println(string(hash_password("deniz2000")))
 
 	db_loc, err := sql.Open("mysql", "root:354152@tcp(127.0.0.1:3306)/mdebis")
 

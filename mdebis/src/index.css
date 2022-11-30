@@ -5,19 +5,16 @@
   padding: 0;
   box-sizing: border-box;
 }
-.noBg{
-  background-image: none;
-  background-color: aliceblue;
-}
+
 body{
   font-family: 'Raleway', sans-serif;
   background-image: url("/image/Kampus.jpeg");
   background-repeat:no-repeat;
-  -webkit-background-size:cover;
-  -moz-background-size:cover;
-  -o-background-size:cover;
-  background-size:cover;
-  background-position:center;
+-webkit-background-size:cover;
+-moz-background-size:cover;
+-o-background-size:cover;
+background-size:cover;
+background-position:center;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -119,4 +116,3 @@ body{
   overflow: hidden;
   height: 10vh;
 }
-

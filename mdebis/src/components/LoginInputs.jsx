@@ -44,12 +44,12 @@ const LoginInputs = ()=>{
   };
   function handleClick() {
     try {
-       var xhttp = new XMLHttpRequest();
-       xhttp.open("GET", "http://localhost:8080/log_student/"+inpt+"/"+pssw,false);
-       xhttp.setRequestHeader("Content-type", "text/html");
-       xhttp.send();
-       var response = JSON.parse(xhttp.response);
-      console.log(response);
+      // var xhttp = new XMLHttpRequest();
+      // xhttp.open("GET", "http://localhost:8080/get_gen_announcements",false);
+      // xhttp.setRequestHeader("Content-type", "text/html");
+      // xhttp.send();
+      // var response = JSON.parse(xhttp.response);
+      //console.log(response);
     } catch (error) {
       alert(error.message);
   }
@@ -73,7 +73,12 @@ const LoginInputs = ()=>{
     <ButtonContainer>
       <Button  content={t("LOGIN_BTN") } onClick={handleClick}/>
     </ButtonContainer>
+
+
+
     </div>
+
+        
         );
       
 }

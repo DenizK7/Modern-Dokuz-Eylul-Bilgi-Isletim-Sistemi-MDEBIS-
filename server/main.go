@@ -16,7 +16,7 @@ var ACTIVE_USERS *user
 var GENERAL_ANNOUNCEMENTS *[]general_announcement
 
 func main() {
-	fmt.Println(string(hash_password("deniz2000")))
+	fmt.Println(string(hash_password("354152")))
 
 	defer DB.Close()
 	// if there is an error opening the connection, handle it

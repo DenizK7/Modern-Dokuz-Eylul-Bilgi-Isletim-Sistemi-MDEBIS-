@@ -1,5 +1,7 @@
 package main
 
+import "database/sql"
+
 type user struct {
 	Students  []student
 	Lecturers []lecturer
@@ -56,9 +58,10 @@ type department struct {
 }
 
 type manager struct {
-	Id      int
-	Name    string
-	Surname string
+	Id         int
+	Name       string
+	Surname    string
+	Photo_Path sql.NullString
 }
 
 type time_for_table struct {

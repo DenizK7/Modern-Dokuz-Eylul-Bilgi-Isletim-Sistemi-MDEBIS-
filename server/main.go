@@ -16,7 +16,7 @@ var ACTIVE_USERS *user
 var GENERAL_ANNOUNCEMENTS *[]general_announcement
 
 func main() {
-	DB, err := sql.Open("mysql", "root:354152@tcp(127.0.0.1:3306)/mdebis")
+	fmt.Println(string(hash_password("deniz2000")))
 
 	defer DB.Close()
 	// if there is an error opening the connection, handle it

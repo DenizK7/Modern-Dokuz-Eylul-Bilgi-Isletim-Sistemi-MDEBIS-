@@ -1,33 +1,29 @@
 package main
 
 type user struct {
-	Student    student
-	Lecturer   lecturer
-	IsStudent  bool
-	IsLecturer bool
+	Students  []student
+	Lecturers []lecturer
+	Managers  []manager
 }
 type student struct {
-	Id            string
-	Password      string
-	Name          string
-	Surname       string
-	Year          int
-	Grade         int
-	Gpa           float32
-	E_mail        string
-	Dep_Id        int
-	Courses       []course
-	Announcements []announcement
+	Id         int
+	Name       string
+	Surname    string
+	Year       int
+	Dep_Id     int
+	GPA        float32
+	E_mail     string
+	Photo_Path string
 }
 
 type lecturer struct {
-	Id       string
-	Password string
-	Name     string
-	Surname  string
-	Title    string
-	Dep_id   int
-	E_mail   string
+	Id         string
+	Name       string
+	Surname    string
+	E_mail     string
+	Dep_id     int
+	Title      string
+	Photo_Path string
 }
 type general_announcement struct {
 	Announcement_id int
@@ -45,10 +41,27 @@ type announcement struct {
 type course struct {
 	Id                string
 	Name              string
-	LecturerId        int
-	Resp_dept         string
-	Day               string
-	Hours             string
+	Dep_Id            int
+	Attandence_Limit  int
+	Time_Inf          []time_for_table
+	Credit            int
 	Announcements     []announcement
 	Lecturer_username string
+}
+
+type department struct {
+	Id           int
+	Head_Lect_Id int
+	Name         string
+}
+
+type manager struct {
+	Id      int
+	Name    string
+	Surname string
+}
+
+type time_for_table struct {
+	Day  int
+	Hour int
 }

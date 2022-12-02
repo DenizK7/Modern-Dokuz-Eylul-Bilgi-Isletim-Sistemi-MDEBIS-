@@ -18,12 +18,17 @@ var GENERAL_ANNOUNCEMENTS *[]general_announcement
 func main() {
 	fmt.Println(string(hash_password("deniz2000")))
 	var err error
-	DB, err := sql.Open("mysql", "root:354152@tcp(127.0.0.1:3306)/mdebis")
+	DB, err = sql.Open("mysql", "root:354152@tcp(127.0.0.1:3306)/mdebis")
+	if DB != nil {
 
+	}
+	//trying functions
+	var student *student = new(student)
+	student.Id = 2015501167
+	get_courses_time_table(student)
 	if err != nil {
 		panic(err.Error())
 	}
-	defer DB.Close()
 	r := Router()
 	fmt.Println("Starting server on the port 8080...")
 	log.Fatal(http.ListenAndServe(":8080", r))

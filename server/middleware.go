@@ -77,7 +77,6 @@ func student_log_in(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(student)
-
 }
 func lecturer_log_in(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)

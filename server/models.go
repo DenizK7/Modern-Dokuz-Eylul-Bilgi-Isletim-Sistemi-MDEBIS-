@@ -8,14 +8,17 @@ type user struct {
 	Managers  []manager
 }
 type student struct {
-	Id         int
-	Name       string
-	Surname    string
-	Year       int
-	Dep_Id     int
-	GPA        float32
-	E_mail     string
-	Photo_Path string
+	Id                 int
+	Name               string
+	Surname            string
+	Year               int
+	Dep_Id             int
+	GPA                float32
+	E_mail             string
+	Photo_Path         string
+	Courses            []course
+	Created_Time_Table bool
+	Time_table         [40]time_table_entry
 }
 
 type lecturer struct {
@@ -24,6 +27,7 @@ type lecturer struct {
 	Surname    string
 	E_mail     string
 	Dep_id     int
+	Courses    []course
 	Title      string
 	Photo_Path string
 }
@@ -45,7 +49,7 @@ type course struct {
 	Name              string
 	Dep_Id            int
 	Attandence_Limit  int
-	Time_Inf          []time_for_table
+	Time_Inf          []course_time
 	Credit            int
 	Announcements     []announcement
 	Lecturer_username string
@@ -63,8 +67,13 @@ type manager struct {
 	Surname    string
 	Photo_Path sql.NullString
 }
-
-type time_for_table struct {
+type time_table_entry struct {
+	Department       string
+	Course_name      string
+	Lecturer_name    string
+	Attandence_Limit int
+}
+type course_time struct {
 	Day  int
 	Hour int
 }

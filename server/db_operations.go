@@ -6,8 +6,96 @@ import (
 	"strings"
 )
 
+func getRealPasswordStudent(id string) (bool, string) {
+	var realPassword string
+
+	if err := DB.QueryRow("SELECT Password from mdebis.student where Student_Id=?", id).Scan(&realPassword); err != nil {
+		if err == sql.ErrNoRows {
+			fmt.Println("error occurred when finding the student")
+			if err != nil {
+				return false, ""
+			}
+			return false, ""
+		}
+		fmt.Println("error occurred when finding the student")
+		if err != nil {
+			return false, ""
+		}
+		return false, ""
+	}
+	return true, realPassword
+}
+
+func getRealPasswordLecturer(id string) (bool, string) {
+	var realPassword string
+
+	if err := DB.QueryRow("SELECT Password from mdebis.lecturer where Lecturer_Id=?", id).Scan(&realPassword); err != nil {
+		if err == sql.ErrNoRows {
+			fmt.Println("error occurred when finding the student")
+			if err != nil {
+				return false, ""
+			}
+			return false, ""
+		}
+		fmt.Println("error occurred when finding the lecturer")
+		if err != nil {
+			return false, ""
+		}
+		return false, ""
+	}
+	return true, realPassword
+}
+func getStudent(id string) (bool, string, *student) {
+	var student *student
+	if err := DB.QueryRow("SELECT Student_Id,Name,Surname,Year,Department_Id,Mail,GPA,Photo_Path from mdebis.student where Student_Id=?", id).Scan(&student.Id, &student.Name, &student.Surname, &student.Year, &student.DepId, &student.EMail, &student.GPA, &student.PhotoPath); err != nil {
+		if err == sql.ErrNoRows {
+			fmt.Println("error occurred when finding the student")
+			if err != nil {
+				return false, "", nil
+			}
+			return false, "", nil
+		}
+		fmt.Println("error occurred when finding the student")
+		if err != nil {
+			return false, "", nil
+		}
+		fmt.Println(err.Error())
+		return false, "", nil
+		//return false, nil, student
+	}
+	sessionKey := generateRandomSession()
+	//create new user record
+	var newUser = new(user)
+	newUser.Student = student
+	ACTIVE_USERS[sessionKey] = *newUser
+	return true, sessionKey, student
+}
+func getLecturer(id string) (bool, string, *student) {
+	var lecturer lecturer
+	if err := DB.QueryRow("SELECT Lecturer_Id,Name,Surname,Mail,Department_Id,Title,Photo_Path from mdebis.lecturer where Lecturer_Id=?", id).Scan(&lecturer.Id, &lecturer.Name, &lecturer.Surname, &lecturer.EMail, &lecturer.DepId, &lecturer.Title, &lecturer.PhotoPath); err != nil {
+		if err == sql.ErrNoRows {
+			fmt.Println("error occurred when finding the lecturer")
+			if err != nil {
+				return false, "", nil
+			}
+			return false, "", nil
+		}
+		fmt.Println("error occurred when finding the lecturer")
+		if err != nil {
+			return false, "", nil
+		}
+		fmt.Println(err.Error())
+		return false, "", nil
+	}
+	SessionKey := generateRandomSession()
+	//create new user record
+	var newUser = new(user)
+	newUser.Lecturer = &lecturer
+	ACTIVE_USERS[SessionKey] = *newUser
+	return true, SessionKey, newUser.Student
+}
 func getCoursesTimeTable(student *student) {
-	if student.Created_Time_Table == true {
+	if student.CreatedTimeTable == true {
 		return
 	}
 	if student.Courses == nil {
@@ -15,7 +103,7 @@ func getCoursesTimeTable(student *student) {
 	}
 
 	courses := student.Courses
-	timeTable := &student.Time_table
+	timeTable := &student.TimeTable
 	for _, course := range courses {
 		courseTime := course.Time_Inf
 		var entry time_table_entry
@@ -36,7 +124,7 @@ func getCoursesTimeTable(student *student) {
 			rightIndex := ((time.Hour - 1) * 5) + time.Day
 			timeTable[rightIndex-1] = entry
 		}
-		student.Created_Time_Table = true
+		student.CreatedTimeTable = true
 	}
 }
 

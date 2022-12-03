@@ -39,3 +39,12 @@ func enableCors(w *http.ResponseWriter) {
 	(*w).Header().Set("Access-Control-Allow-Headers", "Content-Type")
 
 }
+
+func getUser(sessionHash string) *user {
+	user, found := ACTIVE_USERS[sessionHash]
+	if found == false {
+		return nil
+	}
+	return &user
+
+}

@@ -8,42 +8,40 @@ type user struct {
 	Manager  *manager
 }
 type student struct {
-	Id                 int
-	Name               string
-	Surname            string
-	Year               int
-	Dep_Id             int
-	GPA                float32
-	E_mail             string
-	Photo_Path         string
-	Courses            []course
-	Created_Time_Table bool
-	Time_table         [40]time_table_entry
-	SessionKey         string
+	Id               int
+	Name             string
+	Surname          string
+	Year             int
+	DepId            int
+	GPA              float32
+	EMail            string
+	PhotoPath        string
+	Courses          []course
+	CreatedTimeTable bool
+	TimeTable        [40]time_table_entry
 }
 
 type lecturer struct {
-	Id         string
-	Name       string
-	Surname    string
-	E_mail     string
-	Dep_id     int
-	Courses    []course
-	Title      string
-	Photo_Path string
-	SessionKey string
+	Id        string
+	Name      string
+	Surname   string
+	EMail     string
+	DepId     int
+	Courses   []course
+	Title     string
+	PhotoPath string
 }
 type general_announcement struct {
-	Announcement_id int
-	Title           string
-	Content         string
-	Link            string
+	AnnouncementId int
+	Title          string
+	Content        string
+	Link           string
 }
 type announcement struct {
-	Announcement_id int
-	Course_id       int
-	Title           string
-	Content         string
+	AnnouncementId int
+	CourseId       int
+	Title          string
+	Content        string
 }
 
 type course struct {

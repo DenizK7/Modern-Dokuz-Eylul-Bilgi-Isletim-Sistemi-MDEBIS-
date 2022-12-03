@@ -1,8 +1,7 @@
 package main
 
 import (
-	"database/sql"
-	"encoding/json"
+	json "encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
 	"golang.org/x/crypto/bcrypt"
@@ -23,7 +22,7 @@ func getGeneralAnnouncements(w http.ResponseWriter, r *http.Request) {
 	// Loop through rows, using Scan to assign column data to struct fields.
 	for rows.Next() {
 		var announcement general_announcement
-		if err := rows.Scan(&announcement.Announcement_id, &announcement.Title, &announcement.Content, &announcement.Link); err != nil {
+		if err := rows.Scan(&announcement.AnnouncementId, &announcement.Title, &announcement.Content, &announcement.Link); err != nil {
 			fmt.Println("error occurred when getting general announcements")
 		}
 		announcements = append(announcements, announcement)
@@ -39,74 +38,57 @@ func studentLogIn(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	id := params["username"]
 	typedPassword := params["password"]
-	var realPassword string
-
-	if err := DB.QueryRow("SELECT Password from mdebis.student where Student_Id=?", id).Scan(&realPassword); err != nil {
-		if err == sql.ErrNoRows {
-			fmt.Println("error occurred when finding the student")
-			err := json.NewEncoder(w).Encode("ERROR: NO SUCH A STUDENT")
-			if err != nil {
-				return
-			}
-			return
-		}
-		fmt.Println("error occurred when finding the student")
-		err := json.NewEncoder(w).Encode("false")
-		if err != nil {
-			return
-		}
+	encoder := json.NewEncoder(w)
+	err, realPassword := getRealPasswordStudent(id)
+	if err == true {
+		encoder.Encode(false)
 		return
-		//return false, nil, student
 	}
 	if bcrypt.CompareHashAndPassword([]byte(realPassword), []byte(typedPassword)) != nil {
 		// If the two passwords don't match, return a 401 status
 		fmt.Println("password error")
 		err := json.NewEncoder(w).Encode("false")
 		if err != nil {
+			encoder.Encode(false)
 			return
 		}
+		encoder.Encode(false)
 		return
 	}
 	//create student struct and return its information
-	var student student
-	if err := DB.QueryRow("SELECT Student_Id,Name,Surname,Year,Department_Id,Mail,GPA,Photo_Path from mdebis.student where Student_Id=?", id).Scan(&student.Id, &student.Name, &student.Surname, &student.Year, &student.Dep_Id, &student.E_mail, &student.GPA, &student.Photo_Path); err != nil {
-		if err == sql.ErrNoRows {
-			fmt.Println("error occurred when finding the student")
+	isAchieved, sessionHash, student := getStudent(id)
+	if isAchieved == false {
+		fmt.Println("error occured when logging")
+		encoder.Encode(false)
+		return
+	}
+	encoder.Encode(student)
+	encoder.Encode(sessionHash)
 
-			err := json.NewEncoder(w).Encode("ERROR: NO SUCH A STUDENT")
-			if err != nil {
-				return
-			}
-			return
-		}
-		fmt.Println("error occurred when finding the student")
-		err := json.NewEncoder(w).Encode("ERROR")
-		if err != nil {
-			return
-		}
-		fmt.Println(err.Error())
-		return
-		//return false, nil, student
-	}
-	student.SessionKey = generateRandomSession()
-	//create new user record
-	var newUser = new(user)
-	newUser.Student = &student
-	ACTIVE_USERS[student.SessionKey] = *newUser
-	err := json.NewEncoder(w).Encode(student)
-	if err != nil {
-		return
-	}
 }
+
+/*
+this functin responses the request by encoding the time table in json format
+!ATTENTION! - STUDENT MUST ALREADY LOGGED IN - !ATTENTION!
+*/
+
 func getTimeTable(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
 	params := mux.Vars(r)
-	id := params["id"]
-
-	//checking that this student
-
+	sessionHash := params["sessionHash"]
+	user := getUser(sessionHash)
+	if user == nil {
+		fmt.Println("! ! !first you MUST log in! ! !")
+	}
+	getCoursesTimeTable(user.Student)
+	json.NewEncoder(w).Encode(user.Student.TimeTable)
 }
 
+/*
+This function returns randomly created hash
+to hold the logged user's records
+to be able to serve them later faster without a need to log in everytime
+*/
 func generateRandomSession() string {
 	s1 := rand.NewSource(time.Now().UnixNano())
 	r1 := rand.New(s1)
@@ -115,67 +97,34 @@ func generateRandomSession() string {
 }
 func lecturerLogIn(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
+	encoder := json.NewEncoder(w)
 	params := mux.Vars(r)
 	id := params["username"]
 	typedPassword := params["password"]
-	var realPassword string
-
-	if err := DB.QueryRow("SELECT Password from mdebis.lecturer where Lecturer_Id=?", id).Scan(&realPassword); err != nil {
-		if err == sql.ErrNoRows {
-			fmt.Println("error occurred when finding the student")
-			err := json.NewEncoder(w).Encode("ERROR: NO SUCH A STUDENT")
-			if err != nil {
-				return
-			}
-			return
-		}
-		fmt.Println("error occurred when finding the lecturer")
-		err := json.NewEncoder(w).Encode("false")
-		if err != nil {
-			return
-		}
+	isFound, realPassword := getRealPasswordLecturer(id)
+	if isFound == false {
+		encoder.Encode(false)
 		return
-		//return false, nil, student
 	}
 	if bcrypt.CompareHashAndPassword([]byte(realPassword), []byte(typedPassword)) != nil {
 		// If the two passwords don't match, return a 401 status
 		fmt.Println("password error")
 		err := json.NewEncoder(w).Encode("false")
 		if err != nil {
+			encoder.Encode(false)
 			return
 		}
+		encoder.Encode(false)
 		return
 	}
 	//create student struct and return its information
-	var lecturer lecturer
-	if err := DB.QueryRow("SELECT Lecturer_Id,Name,Surname,Mail,Department_Id,Title,Photo_Path from mdebis.lecturer where Lecturer_Id=?", id).Scan(&lecturer.Id, &lecturer.Name, &lecturer.Surname, &lecturer.E_mail, &lecturer.Dep_id, &lecturer.Title, &lecturer.Photo_Path); err != nil {
-		if err == sql.ErrNoRows {
-			fmt.Println("error occurred when finding the lecturer")
-
-			err := json.NewEncoder(w).Encode("ERROR: NO SUCH A STUDENT")
-			if err != nil {
-				return
-			}
-			return
-		}
-		fmt.Println("error occurred when finding the lecturer")
-		err := json.NewEncoder(w).Encode("ERROR")
-		if err != nil {
-			return
-		}
-		fmt.Println(err.Error())
+	isFoundLecturer, sessionKey, lecturer := getLecturer(id)
+	if isFoundLecturer == false {
+		encoder.Encode(false)
 		return
 	}
-
-	lecturer.SessionKey = generateRandomSession()
-	//create new user record
-	var newUser = new(user)
-	newUser.Lecturer = &lecturer
-	ACTIVE_USERS[lecturer.SessionKey] = *newUser
-	err := json.NewEncoder(w).Encode(lecturer)
-	if err != nil {
-		return
-	}
+	encoder.Encode(lecturer)
+	encoder.Encode(sessionKey)
 
 }
 func managerLogIn(w http.ResponseWriter, r *http.Request) {

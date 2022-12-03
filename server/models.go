@@ -3,9 +3,9 @@ package main
 import "database/sql"
 
 type user struct {
-	Students  []student
-	Lecturers []lecturer
-	Managers  []manager
+	Student  *student
+	Lecturer *lecturer
+	Manager  *manager
 }
 type student struct {
 	Id                 int
@@ -19,6 +19,7 @@ type student struct {
 	Courses            []course
 	Created_Time_Table bool
 	Time_table         [40]time_table_entry
+	SessionKey         string
 }
 
 type lecturer struct {
@@ -30,6 +31,7 @@ type lecturer struct {
 	Courses    []course
 	Title      string
 	Photo_Path string
+	SessionKey string
 }
 type general_announcement struct {
 	Announcement_id int
@@ -65,6 +67,7 @@ type manager struct {
 	Name       string
 	Surname    string
 	Photo_Path sql.NullString
+	SessionKey string
 }
 type time_table_entry struct {
 	Department       string

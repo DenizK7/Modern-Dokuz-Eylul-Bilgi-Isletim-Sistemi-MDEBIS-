@@ -9,24 +9,26 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-/*CONSTANTS CAME HERE
- */
+// DB CONSTANTS COME HERE
 var DB *sql.DB
-var ACTIVE_USERS *user
-var GENERAL_ANNOUNCEMENTS *[]general_announcement
+var ACTIVE_USERS = make(map[string]user)
 
 func main() {
-	fmt.Println(string(hash_password("deniz2000")))
+	//Connect to the DB
 	var err error
 	DB, err = sql.Open("mysql", "root:354152@tcp(127.0.0.1:3306)/mdebis")
 	if DB != nil {
 
 	}
 	//trying functions
+	//try any back-end function here
 
+	//trying functions
 	if err != nil {
 		panic(err.Error())
 	}
+
+	//start to listen to port and response to the requests
 	r := Router()
 	fmt.Println("Starting server on the port 8080...")
 	log.Fatal(http.ListenAndServe(":8080", r))

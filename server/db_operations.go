@@ -6,6 +6,9 @@ import (
 	"strings"
 )
 
+/*
+Returns the password taken from DB if there is match for the given id of a student in the DB
+*/
 func getRealPasswordStudent(id string) (bool, string) {
 	var realPassword string
 
@@ -26,6 +29,9 @@ func getRealPasswordStudent(id string) (bool, string) {
 	return true, realPassword
 }
 
+/*
+Returns the password taken from DB if there is match for the given id of a lecturer in the DB
+*/
 func getRealPasswordLecturer(id string) (bool, string) {
 	var realPassword string
 
@@ -45,6 +51,11 @@ func getRealPasswordLecturer(id string) (bool, string) {
 	}
 	return true, realPassword
 }
+
+/*
+Returns the student struct with its session hash, usually called after a successful login
+Also saves the student to the ACTIVE_USERS map
+*/
 func getStudent(id string) (bool, string, *student) {
 	var student *student
 	if err := DB.QueryRow("SELECT Student_Id,Name,Surname,Year,Department_Id,Mail,GPA,Photo_Path from mdebis.student where Student_Id=?", id).Scan(&student.Id, &student.Name, &student.Surname, &student.Year, &student.DepId, &student.EMail, &student.GPA, &student.PhotoPath); err != nil {
@@ -70,6 +81,11 @@ func getStudent(id string) (bool, string, *student) {
 	ACTIVE_USERS[sessionKey] = *newUser
 	return true, sessionKey, student
 }
+
+/*
+Returns the lecturer struct with its session hash, usually called after a successful login
+Also saves the lecturer to the ACTIVE_USERS map
+*/
 func getLecturer(id string) (bool, string, *student) {
 	var lecturer lecturer
 	if err := DB.QueryRow("SELECT Lecturer_Id,Name,Surname,Mail,Department_Id,Title,Photo_Path from mdebis.lecturer where Lecturer_Id=?", id).Scan(&lecturer.Id, &lecturer.Name, &lecturer.Surname, &lecturer.EMail, &lecturer.DepId, &lecturer.Title, &lecturer.PhotoPath); err != nil {
@@ -94,6 +110,10 @@ func getLecturer(id string) (bool, string, *student) {
 	ACTIVE_USERS[SessionKey] = *newUser
 	return true, SessionKey, newUser.Student
 }
+
+/*
+creates a timetable for a given student by querying the DB for the courses
+*/
 func getCoursesTimeTable(student *student) {
 	if student.CreatedTimeTable == true {
 		return
@@ -128,6 +148,9 @@ func getCoursesTimeTable(student *student) {
 	}
 }
 
+/*
+gets the courses that student enrolled in the current semester
+*/
 func getCourses(student *student) {
 	//GETTING COURSE IDS THAT STUDENT IS TAKING
 	rows, err := DB.Query("SELECT Course_Id FROM mdebis.course_has_student where Student_Id=? and Situtation='Current'", student.Id)
@@ -180,6 +203,9 @@ func getCourses(student *student) {
 	student.Courses = courses
 }
 
+/*
+gets the time information of a given course by querying the DB
+*/
 func addTimeInfo(course *course) {
 	rows, err := DB.Query("SELECT Day,Hour FROM mdebis.course_time where Course_Id=?", course.Id)
 	if err != nil {
@@ -195,6 +221,10 @@ func addTimeInfo(course *course) {
 	}
 
 }
+
+/*
+gets the lecturer(s) information of a given course by querying the DB
+*/
 
 func getLecturerOfCourse(course *course) []string {
 	rows, err := DB.Query("SELECT Lecturer_Lecturer_Id FROM mdebis.course_has_lecturer where Course_Course_Id=?", course.Id)

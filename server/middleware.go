@@ -10,6 +10,9 @@ import (
 	"time"
 )
 
+/*
+This function encodes all the GENERAL ANNOUNCEMENTS as a response
+*/
 func responseGetGeneralAnnouncements(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
 	rows, err := DB.Query("SELECT * FROM mdebis.general_announcement")
@@ -32,6 +35,10 @@ func responseGetGeneralAnnouncements(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+/*
+This function encodes the logging student if there is a match in the DB with the given id-password pair
+*/
 
 func responseStudentLogIn(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
@@ -62,6 +69,9 @@ func responseStudentLogIn(w http.ResponseWriter, r *http.Request) {
 
 }
 
+/*
+this function encodes the courses as a response
+*/
 func responseGetCourses(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
 	encoder := json.NewEncoder(w)
@@ -78,7 +88,8 @@ func responseGetCourses(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
-this function responses the request by encoding the time table in json format
+T
+his function responses the request by encoding the timetable in json format
 !ATTENTION! - STUDENT MUST ALREADY LOGGED IN - !ATTENTION!
 */
 
@@ -105,6 +116,10 @@ func generateRandomSession() string {
 	return string(hashPassword(string(r1.Intn(100000))))
 
 }
+
+/*
+This function encodes the logging lecturer if there is a match in the DB with the given id-password pair
+*/
 func responselecturerLogIn(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
 	encoder := json.NewEncoder(w)
@@ -131,6 +146,10 @@ func responselecturerLogIn(w http.ResponseWriter, r *http.Request) {
 	encoder.Encode(sessionKey)
 
 }
+
+/*
+This function encodes the logging manager if there is a match in the DB with the given id-password pair
+*/
 func managerLogIn(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
 	params := mux.Vars(r)
@@ -178,6 +197,10 @@ func managerLogIn(w http.ResponseWriter, r *http.Request) {
 	}
 
 }
+
+/*
+This function hashes the given string
+*/
 func hashPassword(password string) []byte {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), 8)
 	if err != nil {

@@ -6,7 +6,7 @@ func Router() *mux.Router {
 
 	router := mux.NewRouter()
 	router.HandleFunc("/log_student/{username}/{password}", student_log_in)
-	router.HandleFunc("", get_general_announcements)
+	router.HandleFunc("", getGeneralAnnouncements)
 
 	return router
 }

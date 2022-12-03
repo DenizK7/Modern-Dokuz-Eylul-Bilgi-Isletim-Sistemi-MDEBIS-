@@ -340,9 +340,20 @@ def add_courses(connection):
 
 
 
+def add_day_hours(connection):
+    cursor=connection.cursor()
+    cursor.execute("select Course_Id from MDEBIS.course;")
+    ids=[]
+    myresult=cursor.fetchall()
+    for row in myresult:
+        ids.append(row[0])
 
-
-
+    connection.commit()
+    for id in ids:
+        sql = "INSERT INTO MDEBIS.course_time (Course_Id, Day,Hour) VALUES (%s, %s,%s)"
+        val = (int(id),rnd.randint(1,5),rnd.randint(1,8))
+        cursor.execute(sql, val)
+        connection.commit()
 def main():
     from passlib.hash import md5_crypt as md5
     from passlib.hash import sha256_crypt as sha256
@@ -354,13 +365,7 @@ def main():
         password="354152",
         database='MDEBIS')
     cursor = mydb.cursor()
-    cursor.execute("select * from MDEBIS.student")
-    myresult=cursor.fetchall()
-    for row in myresult:
-        student_id=row[0]
-        passw=rnd.randint(100000,999999)
-        cursor.execute("UPDATE MDEBIS.student SET Password=%s where student.Student_Id=%s",["354152",student_id])
-        mydb.commit()
+
     #run_sql_file("C:\\Users\\emirc\\Desktop\\CENG\\DB\\term_project\\Modern-Dokuz--Eylul-Bilgi-Isletim-Sistemi-MDEBIS-\\server\\DB\\DB_initial_script.sql",mydb)
     #fill_randomly(mydb)
     #add_lecturers(mydb)
@@ -370,7 +375,7 @@ def main():
     #add_courses(mydb)
     #add_lecturers(mydb)
     #update_course_names(mydb)
-
+    add_day_hours(mydb)
 
 if __name__ == "__main__": 
     main() 

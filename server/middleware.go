@@ -10,7 +10,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func get_general_announcements(w http.ResponseWriter, r *http.Request) {
+func getGeneralAnnouncements(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
 	if GENERAL_ANNOUNCEMENTS != nil {
 		json.NewEncoder(w).Encode(GENERAL_ANNOUNCEMENTS)

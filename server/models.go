@@ -45,14 +45,13 @@ type announcement struct {
 }
 
 type course struct {
-	Id                string
-	Name              string
-	Dep_Id            int
-	Attandence_Limit  int
-	Time_Inf          []course_time
-	Credit            int
-	Announcements     []announcement
-	Lecturer_username string
+	Id               string
+	Name             string
+	Dep_Id           int
+	Attandence_Limit int
+	Time_Inf         []course_time
+	Credit           int
+	Announcements    []announcement
 }
 
 type department struct {

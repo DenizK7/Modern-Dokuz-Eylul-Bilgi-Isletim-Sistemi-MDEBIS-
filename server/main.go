@@ -23,9 +23,7 @@ func main() {
 
 	}
 	//trying functions
-	var student *student = new(student)
-	student.Id = 2015501167
-	get_courses_time_table(student)
+
 	if err != nil {
 		panic(err.Error())
 	}

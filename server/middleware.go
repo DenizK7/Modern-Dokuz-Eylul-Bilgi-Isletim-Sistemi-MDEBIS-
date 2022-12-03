@@ -64,9 +64,14 @@ func responseStudentLogIn(w http.ResponseWriter, r *http.Request) {
 		encoder.Encode(false)
 		return
 	}
+	getCourses(student)
 	encoder.Encode(student)
 	encoder.Encode(sessionHash)
-
+	/*! ! ! IMPORTANT PART ! ! !
+	BECAUSE the response is encoded, now the back-end side can prepare itself for POSSIBLE future requests
+	SUCH AS REQUESTING TIME TABLE?
+	*/
+	getCoursesTimeTable(student)
 }
 
 /*
@@ -142,60 +147,39 @@ func responselecturerLogIn(w http.ResponseWriter, r *http.Request) {
 		encoder.Encode(false)
 		return
 	}
-	encoder.Encode(lecturer)
 	encoder.Encode(sessionKey)
-
+	encoder.Encode(lecturer)
 }
 
 /*
 This function encodes the logging manager if there is a match in the DB with the given id-password pair
 */
-func managerLogIn(w http.ResponseWriter, r *http.Request) {
+func responseManagerLogIn(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
+	encoder := json.NewEncoder(w)
 	params := mux.Vars(r)
 	id := params["username"]
 	typedPassword := params["password"]
-	var realPassword string
-
-	if err := DB.QueryRow("SELECT Password from mdebis.manager where Manager_Id=?", id).Scan(&realPassword); err != nil {
-		if err != nil {
-			fmt.Println(err.Error())
-			err := json.NewEncoder(w).Encode(err.Error())
-			if err != nil {
-				return
-			}
-			return
-		}
-
-		//return false, nil, student
+	isFound, realPassword := getRealPasswordManager(id)
+	if isFound == false {
+		fmt.Println("no such a student")
+		encoder.Encode(false)
 	}
 	if bcrypt.CompareHashAndPassword([]byte(realPassword), []byte(typedPassword)) != nil {
 		// If the two passwords don't match, return a 401 status
 		fmt.Println("password error")
-		err := json.NewEncoder(w).Encode("WRONG PASSWORD!")
-		if err != nil {
-			return
-		}
+		encoder.Encode("WRONG PASSWORD!")
 		return
 	}
 	//create student struct and return its information
-	var manager manager
-	if err := DB.QueryRow("SELECT Manager_Id,Name,Surname,Photo_Path from mdebis.manager where Manager_Id=?", id).Scan(&manager.Id, &manager.Name, &manager.Surname, &manager.Photo_Path); err != nil {
-		fmt.Println("error occurred when finding the lecturer")
-		err := json.NewEncoder(w).Encode("ERROR")
-		if err != nil {
-			return
-		}
-		fmt.Println(err.Error())
-		return
-		//return false, nil, student
-	}
-
-	err := json.NewEncoder(w).Encode(manager)
-	if err != nil {
+	isCreatedManager, sessionHashed, manager := getManager(id)
+	if isCreatedManager == false {
+		encoder.Encode(false)
+		fmt.Println("problem with finding the manager in the DB")
 		return
 	}
-
+	encoder.Encode(sessionHashed)
+	encoder.Encode(manager)
 }
 
 /*

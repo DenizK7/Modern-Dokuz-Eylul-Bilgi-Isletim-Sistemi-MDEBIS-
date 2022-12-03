@@ -52,6 +52,22 @@ func getRealPasswordLecturer(id string) (bool, string) {
 	return true, realPassword
 }
 
+func getRealPasswordManager(id string) (bool, string) {
+	var realPassword string
+
+	if err := DB.QueryRow("SELECT Password from mdebis.manager where Manager_Id=?", id).Scan(&realPassword); err != nil {
+		if err != nil {
+			fmt.Println(err.Error())
+			if err != nil {
+				return false, ""
+			}
+			return false, ""
+		}
+		return false, ""
+	}
+	return true, realPassword
+}
+
 /*
 Returns the student struct with its session hash, usually called after a successful login
 Also saves the student to the ACTIVE_USERS map
@@ -109,6 +125,21 @@ func getLecturer(id string) (bool, string, *student) {
 	newUser.Lecturer = &lecturer
 	ACTIVE_USERS[SessionKey] = *newUser
 	return true, SessionKey, newUser.Student
+}
+
+func getManager(id string) (bool, string, *manager) {
+	var manager manager
+	if err := DB.QueryRow("SELECT Manager_Id,Name,Surname,Photo_Path from mdebis.manager where Manager_Id=?", id).Scan(&manager.Id, &manager.Name, &manager.Surname, &manager.Photo_Path); err != nil {
+		fmt.Println("error occurred when finding the lecturer")
+		fmt.Println(err.Error())
+		return false, "", nil
+	}
+	SessionKey := generateRandomSession()
+	//create new user record
+	var newUser = new(user)
+	newUser.Manager = &manager
+	ACTIVE_USERS[SessionKey] = *newUser
+	return true, SessionKey, newUser.Manager
 }
 
 /*

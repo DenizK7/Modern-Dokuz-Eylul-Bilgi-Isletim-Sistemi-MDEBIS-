@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-func getGeneralAnnouncements(w http.ResponseWriter, r *http.Request) {
+func responseGetGeneralAnnouncements(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
 	rows, err := DB.Query("SELECT * FROM mdebis.general_announcement")
 	if err != nil {
@@ -33,7 +33,7 @@ func getGeneralAnnouncements(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func studentLogIn(w http.ResponseWriter, r *http.Request) {
+func responseStudentLogIn(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
 	params := mux.Vars(r)
 	id := params["username"]
@@ -47,12 +47,7 @@ func studentLogIn(w http.ResponseWriter, r *http.Request) {
 	if bcrypt.CompareHashAndPassword([]byte(realPassword), []byte(typedPassword)) != nil {
 		// If the two passwords don't match, return a 401 status
 		fmt.Println("password error")
-		err := json.NewEncoder(w).Encode("false")
-		if err != nil {
-			encoder.Encode(false)
-			return
-		}
-		encoder.Encode(false)
+		encoder.Encode("false")
 		return
 	}
 	//create student struct and return its information
@@ -67,12 +62,27 @@ func studentLogIn(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func responseGetCourses(w http.ResponseWriter, r *http.Request) {
+	enableCors(&w)
+	encoder := json.NewEncoder(w)
+	params := mux.Vars(r)
+	sessionHash := params["sessionHash"]
+	user := getUser(sessionHash)
+	if user == nil {
+		fmt.Println("! ! !first you MUST log in! ! !")
+		encoder.Encode(false)
+		return
+	}
+	getCourses(user.Student)
+	json.NewEncoder(w).Encode(user.Student.Courses)
+}
+
 /*
-this functin responses the request by encoding the time table in json format
+this function responses the request by encoding the time table in json format
 !ATTENTION! - STUDENT MUST ALREADY LOGGED IN - !ATTENTION!
 */
 
-func getTimeTable(w http.ResponseWriter, r *http.Request) {
+func responseGetTimeTable(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
 	params := mux.Vars(r)
 	sessionHash := params["sessionHash"]
@@ -95,7 +105,7 @@ func generateRandomSession() string {
 	return string(hashPassword(string(r1.Intn(100000))))
 
 }
-func lecturerLogIn(w http.ResponseWriter, r *http.Request) {
+func responselecturerLogIn(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
 	encoder := json.NewEncoder(w)
 	params := mux.Vars(r)
@@ -107,15 +117,9 @@ func lecturerLogIn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if bcrypt.CompareHashAndPassword([]byte(realPassword), []byte(typedPassword)) != nil {
-		// If the two passwords don't match, return a 401 status
+		// If the two passwords do not match, return a 401 status
 		fmt.Println("password error")
-		err := json.NewEncoder(w).Encode("false")
-		if err != nil {
-			encoder.Encode(false)
-			return
-		}
-		encoder.Encode(false)
-		return
+		encoder.Encode("false")
 	}
 	//create student struct and return its information
 	isFoundLecturer, sessionKey, lecturer := getLecturer(id)

@@ -3,7 +3,6 @@ import AnnouncmentMainPage from "./AnnouncmentMainPage";
 export default function Sidebar(props) {
   const { showModal, setShowModal } = props;
   const[content, setContent] = useState([])
-  const[header, setHeader] = useState([])
   useEffect(() => {
     var xhttp = new XMLHttpRequest();
     xhttp.open("GET", "http://localhost:8080/get_gen_announcements",false);

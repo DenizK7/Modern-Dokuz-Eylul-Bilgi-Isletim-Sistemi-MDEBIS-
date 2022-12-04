@@ -2,7 +2,7 @@ import ForgotPassword from "../components/ForgotPass";
 import MainContainer from "../components/MainContainer";
 import SidebarButton from "../components/SidebarButton";
 
-function Login(){
+function ForgetPass(){
     return(
         <body>
            
@@ -15,4 +15,4 @@ function Login(){
         
     );
 }
-    export default Login;
+    export default ForgetPass;

@@ -8,13 +8,11 @@ import ForgotPasswordd from "./ForgotPass";
 import { Navigate } from "react-router-dom";
 import { useState } from "react";
 import LoginInputs from "./LoginInputs";
-<<<<<<< Updated upstream
-=======
 
->>>>>>> Stashed changes
 
 const MainContainer =() =>{
   const [goForgotPassword, setForgotPassword] = useState(false);
+  const [homePage, setHomePage] = useState(false);
   const languages = {
     en: {nativeName: "English 🇺🇸"},
     tr: {nativeName: "Türkçe 🇹🇷"}
@@ -128,18 +126,15 @@ const FormatMail = styled.span`
   if(goForgotPassword){
     return <Navigate to="/ForgotPassword" />;
   }
-<<<<<<< Updated upstream
-=======
   if(homePage){
     return <Navigate to="/Homepage/infoLecture" />;
   }
->>>>>>> Stashed changes
   return (
     <MainContain>
     <WelcomeText>{t("WELCOME")}</WelcomeText>
     
-    <LoginInput />
-    <LoginWith>{t("UNDER_BTN_TXT")}</LoginWith>
+    <LoginInput onClick={() =>{setHomePage(true);}}/>
+    <LoginWith >{t("UNDER_BTN_TXT")}</LoginWith>
     <HorizontalRule />
     <ForgotPassword onClick={() =>{setForgotPassword(true);}}>{t("FORGT_PSSW")}</ForgotPassword >
     <div>

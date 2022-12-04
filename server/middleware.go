@@ -125,7 +125,7 @@ func generateRandomSession() string {
 /*
 This function encodes the logging lecturer if there is a match in the DB with the given id-password pair
 */
-func responselecturerLogIn(w http.ResponseWriter, r *http.Request) {
+func responseLecturerLogIn(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
 	encoder := json.NewEncoder(w)
 	params := mux.Vars(r)

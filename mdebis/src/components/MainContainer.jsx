@@ -5,9 +5,9 @@ import { useTranslation } from "react-i18next";
 import i18n from "../i18n";
 import LoginInput from "./LoginInputs";
 import ForgotPasswordd from "./ForgotPass";
-import { Navigate } from "react-router-dom";
 import { useState } from "react";
 import LoginInputs from "./LoginInputs";
+import { Navigate, Link } from "react-router-dom";
 
 
 const MainContainer =() =>{
@@ -133,7 +133,7 @@ const FormatMail = styled.span`
     <MainContain>
     <WelcomeText>{t("WELCOME")}</WelcomeText>
     
-    <LoginInput onClick={() =>{setHomePage(true);}}/>
+    <LoginInput />
     <LoginWith >{t("UNDER_BTN_TXT")}</LoginWith>
     <HorizontalRule />
     <ForgotPassword onClick={() =>{setForgotPassword(true);}}>{t("FORGT_PSSW")}</ForgotPassword >

@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import axios from "axios";
 import DropDownn from "./DropDown";
 import Button from "./Button";
+import { Navigate, Link } from "react-router-dom";
 const ButtonContainer = styled.div`
   margin: 1rem 0 1rem 0;
   width: 100%;
@@ -51,10 +52,20 @@ const LoginInputs = ()=>{
        var response = JSON.parse(xhttp.response);
       console.log(response);
     } catch (error) {
-      alert(error.message);
+      alert("Kullanıcı adı veya şifre hatalı");
   }
+  if(!response){
+   setHomePage(false);
+  }
+  else{
+    setHomePage(true);
+  }
+    
   };
-  
+  const [homePage, setHomePage] = useState(false);
+  if(homePage){
+    return <Navigate to="/Homepage/infoLecture" />;
+  }
   return(
     <div>
       <ButtonContainer>

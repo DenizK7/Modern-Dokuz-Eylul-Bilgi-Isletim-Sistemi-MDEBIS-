@@ -58,7 +58,7 @@ func responseStudentLogIn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	//create student struct and return its information
-	isAchieved, sessionHash, student := getStudent(id)
+	isAchieved, _, student := getStudent(id)
 	if isAchieved == false {
 		fmt.Println("error occured when logging")
 		encoder.Encode(false)
@@ -66,7 +66,7 @@ func responseStudentLogIn(w http.ResponseWriter, r *http.Request) {
 	}
 	getCourses(student)
 	encoder.Encode(student)
-	encoder.Encode(sessionHash)
+	// encoder.Encode(sessionHash)
 	/*! ! ! IMPORTANT PART ! ! !
 	BECAUSE the response is encoded, now the back-end side can prepare itself for POSSIBLE future requests
 	SUCH AS REQUESTING TIME TABLE?

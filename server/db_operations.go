@@ -73,7 +73,7 @@ Returns the student struct with its session hash, usually called after a success
 Also saves the student to the ACTIVE_USERS map
 */
 func getStudent(id string) (bool, string, *student) {
-	var student *student
+	var student student
 	if err := DB.QueryRow("SELECT Student_Id,Name,Surname,Year,Department_Id,Mail,GPA,Photo_Path from mdebis.student where Student_Id=?", id).Scan(&student.Id, &student.Name, &student.Surname, &student.Year, &student.DepId, &student.EMail, &student.GPA, &student.PhotoPath); err != nil {
 		if err == sql.ErrNoRows {
 			fmt.Println("error occurred when finding the student")
@@ -84,6 +84,7 @@ func getStudent(id string) (bool, string, *student) {
 		}
 		fmt.Println("error occurred when finding the student")
 		if err != nil {
+			fmt.Println(err.Error())
 			return false, "", nil
 		}
 		fmt.Println(err.Error())
@@ -93,9 +94,9 @@ func getStudent(id string) (bool, string, *student) {
 	sessionKey := generateRandomSession()
 	//create new user record
 	var newUser = new(user)
-	newUser.Student = student
+	newUser.Student = &student
 	ACTIVE_USERS[sessionKey] = *newUser
-	return true, sessionKey, student
+	return true, sessionKey, &student
 }
 
 /*

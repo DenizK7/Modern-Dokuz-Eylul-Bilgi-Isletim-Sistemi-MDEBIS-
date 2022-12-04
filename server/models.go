@@ -15,7 +15,7 @@ type student struct {
 	DepId            int
 	GPA              float32
 	EMail            string
-	PhotoPath        string
+	PhotoPath        sql.NullString
 	Courses          []course
 	CreatedTimeTable bool
 	TimeTable        [40]time_table_entry
@@ -29,7 +29,7 @@ type lecturer struct {
 	DepId     int
 	Courses   []course
 	Title     string
-	PhotoPath string
+	PhotoPath sql.NullString
 }
 type general_announcement struct {
 	AnnouncementId int

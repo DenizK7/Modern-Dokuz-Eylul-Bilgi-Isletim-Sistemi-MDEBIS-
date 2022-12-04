@@ -8,6 +8,10 @@ import ForgotPasswordd from "./ForgotPass";
 import { Navigate } from "react-router-dom";
 import { useState } from "react";
 import LoginInputs from "./LoginInputs";
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 
 const MainContainer =() =>{
   const [goForgotPassword, setForgotPassword] = useState(false);
@@ -124,6 +128,12 @@ const FormatMail = styled.span`
   if(goForgotPassword){
     return <Navigate to="/ForgotPassword" />;
   }
+<<<<<<< Updated upstream
+=======
+  if(homePage){
+    return <Navigate to="/Homepage/infoLecture" />;
+  }
+>>>>>>> Stashed changes
   return (
     <MainContain>
     <WelcomeText>{t("WELCOME")}</WelcomeText>

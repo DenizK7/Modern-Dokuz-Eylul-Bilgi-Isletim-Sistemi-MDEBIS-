@@ -16,17 +16,17 @@ func getRealPasswordStudent(id string) (bool, string) {
 		if err == sql.ErrNoRows {
 			fmt.Println("error occurred when finding the student")
 			if err != nil {
-				return false, ""
+				return true, ""
 			}
-			return false, ""
+			return true, ""
 		}
 		fmt.Println("error occurred when finding the student")
 		if err != nil {
-			return false, ""
+			return true, ""
 		}
-		return false, ""
+		return true, ""
 	}
-	return true, realPassword
+	return false, realPassword
 }
 
 /*

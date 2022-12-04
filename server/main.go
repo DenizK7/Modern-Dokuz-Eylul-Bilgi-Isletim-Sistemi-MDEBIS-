@@ -15,6 +15,7 @@ var ACTIVE_USERS = make(map[string]user)
 
 func main() {
 	//Connect to the DB
+	fmt.Println(string(hashPassword("354152")))
 	var err error
 	DB, err = sql.Open("mysql", "root:354152@tcp(127.0.0.1:3306)/mdebis")
 	if DB != nil {
